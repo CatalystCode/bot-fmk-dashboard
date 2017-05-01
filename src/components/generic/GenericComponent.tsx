@@ -2,6 +2,7 @@ import * as React from 'react';
 import { DataSourceConnector, IDataSourceDictionary } from '../../data-sources';
 
 export interface IGenericProps {
+  id?: string;
   title: string;
   subtitle: string;
   dependencies: { [key: string]: string };
@@ -20,9 +21,12 @@ export interface IGenericState { [key: string]: any; }
 export abstract class GenericComponent<T1 extends IGenericProps, T2 extends IGenericState> 
                       extends React.Component<T1, T2> {
 
+  private id: string = null;
+
   constructor(props: T1) {
     super(props);
 
+    this.id = props.id || null;
     this.onStateChange = this.onStateChange.bind(this);
     this.trigger = this.trigger.bind(this);
 
@@ -52,6 +56,19 @@ export abstract class GenericComponent<T1 extends IGenericProps, T2 extends IGen
     Object.keys(result.dataSources).forEach(key => {
       result.dataSources[key].store.unlisten(this.onStateChange);
     });
+  }
+
+  componentDidUpdate() {
+
+    // This logic is used when the same id is used by two elements that appear in the same area.
+    // Since they occupy the same id, componentWillMount/Unmount are not called since react
+    //  thinks the same component was updated.
+    // Nonetheless, the properties may change and the element's dependencies may change.
+    if (this.id !== this.props.id) {
+      this.componentWillUnmount();
+      this.componentDidMount();
+      this.id = this.props.id;
+    }
   }
 
   protected trigger(actionName: string, args: IDictionary) {
@@ -89,7 +106,6 @@ export abstract class GenericComponent<T1 extends IGenericProps, T2 extends IGen
   }
 
   private onStateChange(state: any) {
-
     var result = DataSourceConnector.extrapolateDependencies(this.props.dependencies);
     var updatedState: IGenericState = {};
     Object.keys(result.dependencies).forEach(key => {

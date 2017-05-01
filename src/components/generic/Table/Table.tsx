@@ -16,6 +16,8 @@ export interface ITableProps extends IGenericProps {
     cols: {
       header?: string,
       field?: string,
+      secondaryHeader?: string,
+      secondaryField?: string,
       value?: string,
       width?: string | number,
       type?: 'text' | 'time' | 'icon' | 'button',
@@ -38,17 +40,26 @@ export default class Table extends GenericComponent<ITableProps, ITableState> {
     super(props);
 
     this.onButtonClick = this.onButtonClick.bind(this);
+    this.onRowClick = this.onRowClick.bind(this);
   }
 
   onButtonClick = (col, value) => {
-    this.trigger(col.onClick, value);
+    this.trigger(col.click, value);
+  }
+
+  onRowClick = (row, value) => {
+    let i = row.findIndex((col) => col.type === 'button');
+    if (i === -1) {
+      return;
+    }
+    this.onButtonClick(row[i], value);
   }
 
   fixClassName(value: string) {
     return (value && value.replace(/\./g, '-')) || null;
   }
 
-  render () {
+  render() {
 
     let { props } = this.props;
     let { checkboxes, cols, rowClassNameField } = props;
@@ -59,25 +70,33 @@ export default class Table extends GenericComponent<ITableProps, ITableState> {
     }
     values = values || [];
 
-
     const rows = values.map((value, ri) => (
-      <TableRow key={ri} className={rowClassNameField ? this.fixClassName(value[rowClassNameField]) : null}>
+      <TableRow
+        key={ri}
+        className={rowClassNameField ? this.fixClassName(value[rowClassNameField]) : null}
+        onClick={this.onRowClick.bind(this, cols, value)}
+      >
         {
           cols.map((col, ci) => (
             <TableColumn key={ci} className={this.fixClassName(col.field || col.value)}>{
               col.type === 'icon' ?
                 <FontIcon>{col.value || value[col.field]}</FontIcon> :
-              col.type === 'button' ?
-                (
-                  <Button 
-                    icon={true} 
-                    onClick={this.onButtonClick.bind(this, col, value)}
-                  >{col.value || value[col.field]}
-                  </Button>
-                ) :
-              col.type === 'time' ?
-                moment(value[col.field]).format('MMM-DD HH:mm:ss') :
-                value[col.field]
+                col.type === 'button' ?
+                  (
+                    <Button
+                      icon={true}
+                      onClick={this.onButtonClick.bind(this, col, value)}
+                    >{col.value || value[col.field]}
+                    </Button>
+                  ) :
+                  col.type === 'time' ?
+                    moment(value[col.field]).format('MMM-DD HH:mm:ss') :
+                    col.secondaryField !== undefined ? (
+                      <div className="table">
+                        <span className="primary">{value[col.field]}</span>
+                        <span className="secondary">{value[col.secondaryField]}</span>
+                      </div>
+                    ) : value[col.field]
             }</TableColumn>
           ))
         }
@@ -89,7 +108,17 @@ export default class Table extends GenericComponent<ITableProps, ITableState> {
         <DataTable plain={!checkboxes} data={checkboxes}>
           <TableHeader>
             <TableRow>
-              {cols.map((col, i) => <TableColumn key={i} width={col.width}>{col.header}</TableColumn>)}
+              {cols.map((col, i) => (
+                <TableColumn key={i} width={col.width}>{
+                  col.secondaryHeader !== undefined ? (
+                    <div className="table">
+                      <span className="primary">{col.header}</span>
+                      <span className="secondary">{col.secondaryHeader}</span>
+                    </div>
+                  ) : col.header
+                }</TableColumn>
+              ))
+              }
             </TableRow>
           </TableHeader>
           <TableBody>

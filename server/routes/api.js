@@ -6,45 +6,209 @@ const privateSetupPath = path.join(__dirname, '..', 'config', 'setup.private.jso
 const initialSetupPath = path.join(__dirname, '..', 'config', 'setup.initial.json');
 const router = new express.Router();
 
-router.get('/dashboard.js', (req, res) => {
+router.get('/dashboards', (req, res) => {
 
-  let privateDashboard = path.join(__dirname, '..', 'dashboards', 'dashboard.private.js');
-  let preconfDashboard = path.join(__dirname, '..', 'dashboards', 'preconfigured', 'bot-framework.js');
-  let dashboardPath = fs.existsSync(privateDashboard) ? privateDashboard : preconfDashboard;
+  let privateDashboard = path.join(__dirname, '..', 'dashboards');
+  let preconfDashboard = path.join(__dirname, '..', 'dashboards', 'preconfigured');
 
-  fs.readFile(dashboardPath, 'utf8', (err, data) => {
-    if (err) throw err;
+  let script = '';
+  let files = fs.readdirSync(privateDashboard);
+  if (files && files.length) { 
+    files.forEach((fileName) => {
+      let filePath = path.join(privateDashboard, fileName);
+      let stats = fs.statSync(filePath);
+      if (stats.isFile() && filePath.endsWith('.js')) {
+        let json = getJSONFromScript(filePath);
+        let jsonDefinition = {
+          id: json.id,
+          name: json.name,
+          description: json.description,
+          icon: json.icon,
+          url: json.url,
+          preview: json.preview
+        };
+        let content = 'return ' + JSON.stringify(jsonDefinition);
 
-    // Ensuing this dashboard is loaded into the dashboards array on the page
-    let script = `
-      (function (window) {
-        var dashboard = (function () {
-          ${data}
-        })();
-        window.dashboards = window.dashboards || [];
-        window.dashboards.push(dashboard);
-      })(window);
-    `;
+        // Ensuing this dashboard is loaded into the dashboards array on the page
+        script += `
+          (function (window) {
+            var dashboard = (function () {
+              ${content}
+            })();
+            window.dashboardDefinitions = window.dashboardDefinitions || [];
+            window.dashboardDefinitions.push(dashboard);
+          })(window);
+        `;
+      }
+    });
+  }
 
-    res.send(script);
-  });
+  let templates = fs.readdirSync(preconfDashboard);
+  if (templates && templates.length) {
+    templates.forEach((fileName) => {
+      let filePath = path.join(preconfDashboard, fileName);
+      let stats = fs.statSync(filePath);
+      if (stats.isFile() && filePath.endsWith('.js')) {
+        let json = getJSONFromScript(filePath);
+        let jsonDefinition = {
+          id: json.id,
+          name: json.name,
+          description: json.description,
+          icon: json.icon,
+          url: json.url,
+          preview: json.preview
+        };
+        let content = 'return ' + JSON.stringify(jsonDefinition);
+        
+        // Ensuing this dashboard is loaded into the dashboards array on the page
+        script += `
+          (function (window) {
+            var dashboardTemplate = (function () {
+              ${content}
+            })();
+            window.dashboardTemplates = window.dashboardTemplates || [];
+            window.dashboardTemplates.push(dashboardTemplate);
+          })(window);
+        `;
+      }
+    });
+  }
+
+  res.send(script);  
 });
 
-router.post('/dashboard.js', (req, res) => {
-  var content = (req.body && req.body.script) || '';
-  console.dir(content);
+router.get('/dashboards/:id', (req, res) => {
 
-  fs.writeFile(path.join(__dirname, '..', 'dashboards', 'dashboard.private.js'), content, err => {
+  let dashboardId = req.params.id;
+  let privateDashboard = path.join(__dirname, '..', 'dashboards');
+
+  let script = '';
+  let dashboardFile = getFileById(privateDashboard, dashboardId);
+
+  if (dashboardFile) {
+    let filePath = path.join(privateDashboard, dashboardFile);
+    let stats = fs.statSync(filePath);
+    if (stats.isFile()) {
+      let content = fs.readFileSync(filePath, 'utf8');
+
+      // Ensuing this dashboard is loaded into the dashboards array on the page
+      script += `
+        (function (window) {
+          var dashboard = (function () {
+            ${content}
+          })();
+          window.dashboard = dashboard || null;
+        })(window);
+      `;
+    }
+  }
+
+  res.send(script);  
+});
+
+router.post('/dashboards/:id', (req, res) => {
+  let { id } = req.params;
+  let { script } = req.body || '';
+
+  let privateDashboard = path.join(__dirname, '..', 'dashboards');
+  let dashboardFile = getFileById(privateDashboard, id);
+  let filePath = path.join(privateDashboard, dashboardFile);
+
+  fs.writeFile(filePath, script, err => {
     if (err) {
       console.error(err);
       return res.end(err);
     }
 
-    res.end(content);
+    res.json({ script });
   })
 });
 
-function isAuthoeizedToSetup(req) {
+router.get('/templates/:id', (req, res) => {
+
+  let templateId = req.params.id;
+  let preconfDashboard = path.join(__dirname, '..', 'dashboards', 'preconfigured');
+
+  let script = '';
+  let dashboardFile = getFileById(preconfDashboard, templateId);
+
+  if (dashboardFile) {
+    let filePath = path.join(preconfDashboard, dashboardFile);
+    let stats = fs.statSync(filePath);
+    if (stats.isFile()) {
+      let content = fs.readFileSync(filePath, 'utf8');
+
+      // Ensuing this dashboard is loaded into the dashboards array on the page
+      script += `
+        (function (window) {
+          var template = (function () {
+            ${content}
+          })();
+          window.template = template || null;
+        })(window);
+      `;
+    }
+  }
+
+  res.send(script);  
+});
+
+router.put('/dashboards/:id', (req, res) => {
+  let { id } = req.params;
+  let { script } = req.body || '';
+
+  let privateDashboard = path.join(__dirname, '..', 'dashboards');
+  let dashboardPath = path.join(privateDashboard, id + '.private.js');
+  let dashboardFile = getFileById(privateDashboard, id);
+  let dashboardExists = fs.existsSync(dashboardPath);
+
+  if (dashboardFile || dashboardExists) {
+    return res.json({ errors: ['Dashboard id or filename already exists'] });
+  }
+
+  fs.writeFile(dashboardPath, script, err => {
+    if (err) {
+      console.error(err);
+      return res.end(err);
+    }
+
+    res.json({ script });
+  });
+});
+
+function getFileById(dir, id) {
+  let files = fs.readdirSync(dir) || [];
+
+  // Make sure the array only contains files
+  files = files.filter(fileName => fs.statSync(path.join(dir, fileName)).isFile());
+
+  let dashboardFile = null;
+  if (files.length) { 
+
+    let dashboardIndex = parseInt(id);
+    if (!isNaN(dashboardIndex) && files.length > dashboardIndex) {
+      dashboardFile = files[dashboardIndex];
+    }
+
+    if (!dashboardFile) {
+      files.forEach(fileName => {
+        let filePath = path.join(dir, fileName);
+
+        let stats = fs.statSync(filePath);
+        if (stats.isFile() && filePath.endsWith('.js')) {
+          let dashboard = getJSONFromScript(filePath);
+          if (dashboard.id && dashboard.id === id) {
+            dashboardFile = fileName;
+          }
+        }
+      });
+    }
+  }
+
+  return dashboardFile;
+}
+
+function isAuthorizedToSetup(req) {
   if (!fs.existsSync(privateSetupPath)) { return true; }
   
   let configString = fs.readFileSync(privateSetupPath, 'utf8');
@@ -61,7 +225,7 @@ function isAuthoeizedToSetup(req) {
 
 router.get('/setup', (req, res) => {
 
-  if (!isAuthoeizedToSetup(req)) { 
+  if (!isAuthorizedToSetup(req)) { 
     return res.send({ error: new Error('User is not authorized to setup') });
   }
 
@@ -76,7 +240,7 @@ router.get('/setup', (req, res) => {
 
 router.post('/setup', (req, res) => {
 
-  if (!isAuthoeizedToSetup(req)) { 
+  if (!isAuthorizedToSetup(req)) { 
     return res.send({ error: new Error('User is not authorized to setup') });
   }
 
@@ -95,4 +259,21 @@ router.post('/setup', (req, res) => {
 
 module.exports = {
   router
+}
+
+function getJSONFromScript(filePath) {
+  if (!fs.existsSync(filePath)) { return {}; }
+  
+  let jsonScript = {};
+  let stats = fs.statSync(filePath);
+  if (stats.isFile() && filePath.endsWith('.js')) {
+    let content = fs.readFileSync(filePath, 'utf8');
+    try {
+      eval('jsonScript = (function () { ' + content + ' })();');
+    } catch (e) {
+      console.warn('Parse error with template:', filePath, e);
+    }
+  }
+
+  return jsonScript;
 }

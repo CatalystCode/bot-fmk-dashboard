@@ -7,6 +7,10 @@ import configurationActions from '../actions/ConfigurationsActions';
 
 interface IConfigurationsStoreState {
   dashboard: IDashboardConfig;
+  dashboards: IDashboardConfig[];
+  template: IDashboardConfig;
+  templates: IDashboardConfig[];
+  creationState: string;
   connections: IDictionary;
   connectionsMissing: boolean;
   loaded: boolean;
@@ -15,6 +19,10 @@ interface IConfigurationsStoreState {
 class ConfigurationsStore extends AbstractStoreModel<IConfigurationsStoreState> implements IConfigurationsStoreState {
 
   dashboard: IDashboardConfig;
+  dashboards: IDashboardConfig[];
+  template: IDashboardConfig;
+  templates: IDashboardConfig[];
+  creationState: string;
   connections: IDictionary;
   connectionsMissing: boolean;
   loaded: boolean;
@@ -23,16 +31,42 @@ class ConfigurationsStore extends AbstractStoreModel<IConfigurationsStoreState> 
     super();
 
     this.dashboard = null;
+    this.dashboards = null;
+    this.template = null;
+    this.templates = null;
+    this.creationState = null;
     this.connections = {};    
     this.connectionsMissing = false;
     this.loaded = false;
 
     this.bindListeners({
-      loadConfiguration: configurationActions.loadConfiguration
+      loadConfiguration: configurationActions.loadConfiguration,
+      loadDashboard: configurationActions.loadDashboard,
+      loadTemplate: configurationActions.loadTemplate,
+      createDashboard: configurationActions.createDashboard
     });
+
+    configurationActions.loadConfiguration();
+
+    let pathname = window.location.pathname;
+    if (pathname === '/dashboard') {
+      configurationActions.loadDashboard("0");
+    }
+    
+    if (pathname.startsWith('/dashboard/')) {
+      let dashboardId = pathname.substring('/dashboard/'.length);
+      configurationActions.loadDashboard(dashboardId);
+    }
   }
   
-  loadConfiguration(dashboard: IDashboardConfig) {
+  loadConfiguration(result: { dashboards: IDashboardConfig[], templates: IDashboardConfig[] }) {
+    let { dashboards,templates } = result;
+    this.dashboards = dashboards;
+    this.templates = templates;
+  }
+
+  loadDashboard(result: { dashboard: IDashboardConfig }) {
+    let { dashboard } = result;
     this.dashboard = dashboard;
 
     if (this.dashboard && !this.loaded) {
@@ -44,6 +78,26 @@ class ConfigurationsStore extends AbstractStoreModel<IConfigurationsStoreState> 
       this.connectionsMissing = Object.keys(this.connections).some(connectionKey => {
         var connection = this.connections[connectionKey];
         
+        return Object.keys(connection).some(paramKey => !connection[paramKey]);
+      });
+    }
+  }
+
+  createDashboard(result: { dashboard: IDashboardConfig }) {
+    this.creationState = 'successful';
+  }
+
+  loadTemplate(result: { template: IDashboardConfig }) {
+    let { template } = result;
+    this.template = template;
+
+    if (this.template) {
+      
+      this.connections = this.getConnections(template);
+
+      // Checking for missing connection params
+      this.connectionsMissing = Object.keys(this.connections).some(connectionKey => {
+        var connection = this.connections[connectionKey];
         return Object.keys(connection).some(paramKey => !connection[paramKey]);
       })
     }

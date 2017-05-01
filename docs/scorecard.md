@@ -15,7 +15,7 @@ This article explains how define a Scorecard display control.
 | `actions`| `object` || Defined actions for this element
 
 # Three States
-There are 3 configuraions for this element type
+There are 3 configurations for this element type
 
 ## Single value
 

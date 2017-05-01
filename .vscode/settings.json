@@ -2,5 +2,10 @@
 {
   "files.exclude": {
     "**/*.css": { "when": "$(basename).scss"}
-  }
+  },
+  "editor.rulers": [
+    120
+  ],
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2
 }
