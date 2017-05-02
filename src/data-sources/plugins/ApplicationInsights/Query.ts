@@ -41,9 +41,8 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
    * @param {function} callback
    */
   updateDependencies(dependencies: any) {
-    const emptyDependency :boolean = !!Object.keys(this._props.dependencies).find(key => typeof dependencies[key] === 'undefined');
-
     // If one of the dependencies is not supplied, do not run the query
+    const emptyDependency :boolean = !!Object.keys(this._props.dependencies).find(key => typeof dependencies[key] === 'undefined');
     if (emptyDependency) {
       return (dispatch) => {
         return dispatch();
