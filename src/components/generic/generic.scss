@@ -81,3 +81,14 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
+/* Table */
+
+.table > .primary {
+	display: block;
+	color: black;
+}
+
+.table > .secondary {
+	color: grey;
+}

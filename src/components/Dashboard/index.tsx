@@ -16,6 +16,7 @@ import { loadDialogsFromDashboard } from '../generic/Dialogs';
 
 import ConfigurationsActions from '../../actions/ConfigurationsActions';
 import ConfigurationsStore from '../../stores/ConfigurationsStore';
+import VisibilityStore from '../../stores/VisibilityStore';
 
 interface IDashboardState {
   editMode?: boolean,
@@ -24,6 +25,7 @@ interface IDashboardState {
   currentBreakpoint?: string;
   layouts?: ILayouts;
   grid?: any;
+  visibilityFlags?: IDict<boolean>;
 }
 
 interface IDashboardProps {
@@ -40,7 +42,8 @@ export default class Dashboard extends React.Component<IDashboardProps, IDashboa
     currentBreakpoint: 'lg',
     mounted: false,
     layouts: { },
-    grid: null
+    grid: null,
+    visibilityFlags: {}
   };
 
   constructor(props: IDashboardProps) {
@@ -53,6 +56,10 @@ export default class Dashboard extends React.Component<IDashboardProps, IDashboa
     this.onDeleteDashboard = this.onDeleteDashboard.bind(this);
     this.onDeleteDashboardApprove = this.onDeleteDashboardApprove.bind(this);
     this.onDeleteDashboardCancel = this.onDeleteDashboardCancel.bind(this);
+
+    VisibilityStore.listen(state => {
+      this.setState({ visibilityFlags: state.flags });
+    })
   }
 
   componentDidMount() {
@@ -114,7 +121,10 @@ export default class Dashboard extends React.Component<IDashboardProps, IDashboa
       let { dashboard } = this.props;
       dashboard.config.layout.layouts = dashboard.config.layout.layouts || {};
       dashboard.config.layout.layouts[breakpoint] = layout;
-      ConfigurationsActions.saveConfiguration(dashboard);
+
+      if (this.state.editMode) {
+        ConfigurationsActions.saveConfiguration(dashboard);
+      }
     }, 500);
       
   }

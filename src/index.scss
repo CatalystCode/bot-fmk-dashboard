@@ -47,6 +47,10 @@ h2, .md-subheading-2 {
 .md-card {
   position: relative;
   height: 100%;
+
+  &.hide-borders {
+    box-shadow: none; 
+  }
 }
 
 .md-card-title {

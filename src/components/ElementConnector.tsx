@@ -2,8 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import plugins from './generic/plugins';
 
+import { DataSourceConnector } from '../data-sources/DataSourceConnector';
+import VisibilityActions from '../actions/VisibilityActions';
+import VisibilityStore from '../stores/VisibilityStore';
+
 export default class ElementConnector {
-  static loadLayoutFromDashboard(elementsContainer: IElementsContainer, dashboard: IDashboardConfig) : ILayouts {
+  static loadLayoutFromDashboard(elementsContainer: IElementsContainer, dashboard: IDashboardConfig): ILayouts {
     
     var layouts = {};
     _.each(dashboard.config.layout.cols, (totalColumns, key) => {
@@ -23,11 +27,11 @@ export default class ElementConnector {
 
         layouts[key] = layouts[key] || [];
         layouts[key].push({
-          "i": id,
-          "x": curCol,
-          "y": curRowOffset,
-          "w": size.w,
-          "h": size.h
+          'i': id,
+          'x': curCol,
+          'y': curRowOffset,
+          'w': size.w,
+          'h': size.h
         });
 
         curCol += size.w;
@@ -40,33 +44,50 @@ export default class ElementConnector {
 
   static loadElementsFromDashboard(dashboard: IElementsContainer, layout: ILayout[]): React.Component<any, any>[] {
     var elements = [];
+    var elementId = {};
+    var visibilityFlags = (VisibilityStore.getState() || {}).flags || {};
 
     dashboard.elements.forEach((element, idx) => {
       var ReactElement = plugins[element.type];
       var { id, dependencies, actions, props, title, subtitle, size, theme } = element;
-      var layoutProps = _.find(layout, { "i": id });
+      var layoutProps = _.find(layout, { 'i': id });
 
+      if (dependencies && dependencies.visible && !visibilityFlags[dependencies.visible]) { 
+        if (typeof visibilityFlags[dependencies.visible] === 'undefined') {
+          let flagDependencies = DataSourceConnector.extrapolateDependencies({ value: dependencies.visible });
+          let flag = {};
+          flag[dependencies.visible] = flagDependencies.dataSources.value || true;
+
+          (VisibilityActions.setFlags as any).defer(flag);
+        } else {
+          return; 
+        }
+      }
+
+      if (elementId[id]) { return; }
+
+      elementId[id] = true;
       elements.push(
         <div key={id}>
           <ReactElement 
-                key={idx} 
-                dependencies={dependencies}
-                actions={actions || {}}
-                props={props || {}}
-                title={title}
-                subtitle={subtitle}
-                layout={layoutProps}
-                theme={theme}
+            id={id + idx}
+            dependencies={dependencies}
+            actions={actions || {}}
+            props={props || {}}
+            title={title}
+            subtitle={subtitle}
+            layout={layoutProps}
+            theme={theme}
           />
         </div>
-      )
+      );
     });
 
     return elements;
   }
 
   static loadFiltersFromDashboard(dashboard: IDashboardConfig): {
-    filters : React.Component<any, any>[],
+    filters: React.Component<any, any>[],
     additionalFilters: React.Component<any, any>[]
   } {
     var filters = [];
@@ -82,7 +103,7 @@ export default class ElementConnector {
               subtitle={element.subtitle}
               icon={element.icon}
         />
-      )
+      );
     });
 
     return { filters, additionalFilters };

@@ -34,11 +34,9 @@ export default class ConfigDashboard extends React.Component<IConfigDashboardPro
 
     this.onSave = this.onSave.bind(this);
     this.onSaveGoToDashboard = this.onSaveGoToDashboard.bind(this);
-
-    ConfigurationsActions.loadConfiguration();
   }
 
-  onParamChange(connectionKey, paramKey, value) {
+  onParamChange(connectionKey: string, paramKey: string, value: any) {
     let { connections } = this.state;
     connections[connectionKey] = connections[connectionKey] || {};
     connections[connectionKey][paramKey] = value;
@@ -69,13 +67,16 @@ export default class ConfigDashboard extends React.Component<IConfigDashboardPro
   onSaveGoToDashboard() {
     this.onSave();
     
-    setTimeout(() => {
-      window.location.replace('/dashboard');
-    }, 2000);
+    setTimeout(
+      () => {
+        window.location.reload();
+      }, 
+      2000
+    );
   }
 
   onCancel() {
-    window.location.replace('/dashboard');    
+    window.location.reload();    
   }
 
   render() {
