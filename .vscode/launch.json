@@ -8,14 +8,14 @@
     "type": "node",
     "request": "launch",
     "name": "Launch Server",
-    "program": "${workspaceRoot}\\server\\index.js",
+    "program": "${workspaceRoot}/server/index.js",
     "outFiles": []
   },
     {
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceRoot}\\client:start",
+      "program": "${workspaceRoot}/client:start",
       "outFiles": []
     },
     {

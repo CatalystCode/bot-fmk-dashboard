@@ -22,7 +22,7 @@ export default class Config extends React.Component<any, IDashboardState> {
   constructor(props: any) {
     super(props);
 
-    ConfigurationsActions.loadConfiguration();
+    //ConfigurationsActions.loadConfiguration();
   }
 
   componentDidMount() {

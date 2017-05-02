@@ -23,7 +23,7 @@ export default class Dashboard extends React.Component<any, IDashboardState> {
   constructor(props: any) {
     super(props);
 
-    ConfigurationsActions.loadConfiguration();
+   // ConfigurationsActions.loadConfiguration();
   }
 
   componentDidMount() {

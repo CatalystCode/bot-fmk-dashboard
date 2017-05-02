@@ -22,7 +22,7 @@ export default class Constant extends DataSourcePlugin<IConstantParams> {
   }
 
   initialize() {
-    var { selectedValue, values } = <any> this._props.params;
+    var { selectedValue, values, fla } = <any> this._props.params;
     return { selectedValue, values };
   }
 

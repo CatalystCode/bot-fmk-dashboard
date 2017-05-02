@@ -126,9 +126,10 @@ export default class MenuFilter extends GenericComponent<any, any> {
   }
 
   render() {
-    var { title, subtitle, icon } = this.props;
-    var { selectedValues, values, overlay } = this.state;
+    const { title, subtitle, icon } = this.props;
+    let { selectedValues, values, overlay } = this.state;
     values = values || [];
+    selectedValues = selectedValues || [];
     let listItems = values.map((value, idx) => {
       return (
         <ListItemControl

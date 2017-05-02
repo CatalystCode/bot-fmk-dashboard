@@ -3,6 +3,9 @@ import * as request from 'xhr-request';
 
 interface IConfigurationsActions {
   loadConfiguration(): any;
+  loadDashboard(id: string): any;
+  createDashboard(dashboard: IDashboardConfig): any;
+  loadTemplate(id: string): any;
   saveConfiguration(dashboard: IDashboardConfig): any;
   failure(error: any): void;
 }
@@ -14,17 +17,70 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
 
   loadConfiguration() {
     
-    return (dispatcher: (dashboard: IDashboardConfig) => void) => {
+    return (dispatcher: (result: { dashboards: IDashboardConfig[], templates: IDashboardConfig[] }) => void) => {
       
-      this.getScript('/api/dashboard.js', () => {
-        let dashboards: IDashboardConfig[] = (window as any)['dashboards'];
+      this.getScript('/api/dashboards', () => {
+        let dashboards: IDashboardConfig[] = (window as any)['dashboardDefinitions'];
+        let templates: IDashboardConfig[] = (window as any)['dashboardTemplates'];
 
-        if (!dashboards || !dashboards.length) {
-          return this.failure(new Error('Could not load configuration'));
+        // if (!dashboards || !dashboards.length) {
+        //   return this.failure(new Error('Could not load configuration'));
+        // }
+
+        return dispatcher({ dashboards, templates });
+      });
+    };
+  }
+
+  loadDashboard(id: string) {
+    
+    return (dispatcher: (result: { dashboard: IDashboardConfig }) => void) => {
+      
+      this.getScript('/api/dashboards/' + id, () => {
+        let dashboard: IDashboardConfig = (window as any)['dashboard'];
+
+        if (!dashboard) {
+          return this.failure(new Error('Could not load configuration for dashboard ' + id));
         }
 
-        let dashboard = dashboards[0];
-        return dispatcher(dashboard);
+        return dispatcher({ dashboard });
+      });
+    };
+  }
+
+  createDashboard(dashboard: IDashboardConfig) {
+    return (dispatcher: (dashboard: IDashboardConfig) => void) => {
+
+      let script = this.objectToString(dashboard);
+      request('/api/dashboards/' + dashboard.id, {
+          method: 'PUT',
+          json: true,
+          body: { script: 'return ' + script }
+        }, 
+        (error: any, json: any) => {
+
+          if (error || (json && json.errors)) {
+            return this.failure(error || json.errors);
+          }
+
+          return dispatcher(json);
+        }
+      );
+    };
+  }
+
+  loadTemplate(id: string) {
+    
+    return (dispatcher: (result: { template: IDashboardConfig }) => void) => {
+      
+      this.getScript('/api/templates/' + id, () => {
+        let template: IDashboardConfig = (window as any)['template'];
+
+        if (!template) {
+          return this.failure(new Error('Could not load configuration for template ' + id));
+        }
+
+        return dispatcher({ template });
       });
     };
   }
@@ -34,7 +90,7 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
 
       let stringDashboard = this.objectToString(dashboard);
       
-      request('/api/dashboard.js', {
+      request('/api/dashboards/' + dashboard.id, {
           method: 'POST',
           json: true,
           body: { script: 'return ' + stringDashboard }
