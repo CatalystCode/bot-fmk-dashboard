@@ -1,6 +1,7 @@
 import alt, { AbstractStoreModel } from '../alt';
 
 import visibilityActions from '../actions/VisibilityActions';
+import { IDict } from '../types';
 
 class VisibilityStore extends AbstractStoreModel<any> {
 

@@ -1,3 +1,4 @@
+import { IDashboardConfig } from '../../types';
 export default <IDashboardConfig>{
   config: {
     layout: {

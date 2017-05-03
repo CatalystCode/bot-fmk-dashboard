@@ -1,3 +1,4 @@
+import { IDictionary, IConnection, IConnections, IStringDictionary } from '../../types';
 
 export interface IDataSourceOptions {
   dependencies: (string | Object)[];

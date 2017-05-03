@@ -6,6 +6,7 @@ import Media, { MediaOverlay } from 'react-md/lib/Media';
 import Dialog from 'react-md/lib/Dialogs';
 import TextField from 'react-md/lib/TextFields';
 import { Link } from 'react-router';
+import { IDashboardConfig, ISetupConfig } from '../../types';
 
 import InfoDrawer from '../common/InfoDrawer';
 

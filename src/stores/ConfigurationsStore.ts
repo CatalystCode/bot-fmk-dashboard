@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import connections from '../data-sources/connections';
 import { DataSourceConnector, IDataSourceDictionary } from '../data-sources';
 import configurationActions from '../actions/ConfigurationsActions';
+import { IDashboardConfig, IDictionary } from '../types';
 
 interface IConfigurationsStoreState {
   dashboard: IDashboardConfig;

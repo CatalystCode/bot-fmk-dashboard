@@ -4,6 +4,7 @@ import { DataSourcePlugin, IOptions } from '../DataSourcePlugin';
 import { appInsightsUri } from './common';
 import ApplicationInsightsConnection from '../../connections/application-insights';
 import {DataSourceConnector} from '../../DataSourceConnector';
+import { IDict, IDictionary, IStringDictionary } from '../../../types';
 
 let connectionType = new ApplicationInsightsConnection();
 

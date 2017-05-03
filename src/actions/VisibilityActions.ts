@@ -1,4 +1,5 @@
 import alt, { AbstractActions } from '../alt';
+import { IDict } from '../types';
 
 interface IVisibilityActions {
   setFlags(flags: IDict<boolean>): any;

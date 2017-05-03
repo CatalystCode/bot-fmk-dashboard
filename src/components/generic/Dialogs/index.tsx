@@ -3,6 +3,7 @@ import * as React from 'react';
 import Dialog from './Dialog';
 import DialogsActions from './DialogsActions';
 import DialogsStore from './DialogsStore';
+import { IDashboardConfig } from '../../../types';
 
 function loadDialogsFromDashboard(dashboard: IDashboardConfig): JSX.Element[] {
 

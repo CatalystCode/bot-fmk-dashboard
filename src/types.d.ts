@@ -1,8 +1,11 @@
-type IDict<T> = { [id: string]: T };
-type IDictionary = IDict<any>;
+export type IDict<T> = { [id: string]: T };
+export type IDictionary = IDict<any>;
 type IStringDictionary = IDict<string>;
 
-interface IDataSource {
+type IConnection = IStringDictionary; 
+export type IConnections = IDict<IConnection>;
+
+export interface IDataSource {
   type: string,
   id: string,
   dependencies?: IStringDictionary,
@@ -41,7 +44,7 @@ interface AIDataSource extends IDataSource {
       query: AIQuery,
       mappings: IDict<AIMapping>,
       filters: Array<IStringDictionary>,
-      calculated: (state: any, dependencies: any, prevState: any) => any
+      calculated: (state: any, dependencies?: any, prevState?: any) => any
     }>,
   } | {
     query: AIQuery,
@@ -51,7 +54,7 @@ interface AIDataSource extends IDataSource {
 
 type DataSource = ConstantDataSource | AIDataSource | IDataSource;
 
-interface IDataSourceContainer {
+export interface IDataSourceContainer {
   dataSources: DataSource[]
 }
 
@@ -63,7 +66,7 @@ interface Sizes<T> {
   xxs?: T
 }
 
-interface ILayout { 
+export interface ILayout { 
   "i": string,
   "x": number,
   "y": number,
@@ -79,6 +82,8 @@ interface ILayout {
   isResizable: boolean
 }
 
+export type ILayouts = Sizes<ILayout[]>;
+
 export interface IDashboardConfig extends IDataSourceContainer, IElementsContainer {
   id: string,
   name: string,
@@ -87,7 +92,7 @@ export interface IDashboardConfig extends IDataSourceContainer, IElementsContain
   description?: string,
   preview?: string,
   config: {
-    connections: IDict<IStringDictionary>,
+    connections: IConnections,
     layout: {
       isDraggable?: boolean,
       isResizable?: boolean,
@@ -95,7 +100,7 @@ export interface IDashboardConfig extends IDataSourceContainer, IElementsContain
       verticalCompact?: boolean, // Turns off compaction so you can place items wherever.
       cols: Sizes<number>,
       breakpoints: Sizes<number>,
-      layouts: Sizes<ILayout[]>
+      layouts: ILayouts
     }
   },
   filters: IFilter[]
@@ -124,22 +129,22 @@ interface IFilter {
   first: boolean
 }
 
-interface IElementsContainer {
+export interface IElementsContainer {
   elements: IElement[]  
 }
 
-interface IDialog extends IDataSourceContainer, IElementsContainer {
+export interface IDialog extends IDataSourceContainer, IElementsContainer {
   id: string
   width?: string | number
   params: string[]
 }
 
-type IAction = string | {
+export type IAction = string | {
   action: string,
   params: IStringDictionary
 }
 
-interface ISetupConfig {
+export interface ISetupConfig {
   stage: string;
   admins: string[];
   enableAuthentication: boolean;

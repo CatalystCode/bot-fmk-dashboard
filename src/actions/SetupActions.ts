@@ -1,5 +1,7 @@
 import alt, { AbstractActions } from '../alt';
+import { ISetupConfig } from '../types';
 import * as request from 'xhr-request';
+
 import {IToast, ToastActions} from '../components/Toast';
 
 interface ISetupActions {

@@ -3,6 +3,8 @@ import * as _ from 'lodash';
 import TextField from 'react-md/lib/TextFields';
 import Button from 'react-md/lib/Buttons/Button';
 
+import { IDashboardConfig, IDictionary } from '../../types';
+
 import ConfigurationsActions from '../../actions/ConfigurationsActions';
 import ConfigurationsStore from '../../stores/ConfigurationsStore';
 
