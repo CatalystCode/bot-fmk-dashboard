@@ -17,20 +17,20 @@ const router = new express.Router();
 const fields = {
   id: /\s*id:\s*("|')(.*)("|')/,
   name: /\s*name:\s*("|')(.*)("|')/,
-  description: /\s*descriptionRegExp:\s*("|')(.*)("|')/,
+  description: /\s*description:\s*("|')(.*)("|')/,
   icon: /\s*icon:\s*("|')(.*)("|')/,
   preview: /\s*preview:\s*("|')(.*)("|')/,
   html: /\s*html:\s*(`)(.*)(`)/
 }
 
 const getField = (regExp, text) => {
-  const match = regExp.match(text);
-  return match && match.length >= 3 && match[2];
+  const matches = regExp.exec(text);
+  return matches && matches.length >= 3 && matches[2];
 }
 
 const getMetadata = (text) => {
   const metadata = {}
-  for (key of fields) {
+  for (key in fields) {
     metadata[key] = getField(fields[key], text);
   }
   return metadata;
@@ -43,7 +43,7 @@ const paths = () => ({
 
 const isValidFile = (filePath) => {
   const stats = fs.statSync(filePath);
-  return stats.isFile() && (filePath.endsWith('.js') || filePath.endsWith('.js'));
+  return stats.isFile() && (filePath.endsWith('.js') || filePath.endsWith('.ts'));
 }
 
 const getFileContents = (filePath) => {
@@ -54,7 +54,6 @@ const getFileContents = (filePath) => {
 }
 
 router.get('/dashboards', (req, res) => {
-
   const { privateDashboard, preconfDashboard }  = paths();
 
   let script = '';
@@ -62,7 +61,7 @@ router.get('/dashboards', (req, res) => {
   if (files && files.length) { 
     files.forEach((fileName) => {
       let filePath = path.join(privateDashboard, fileName);
-      if (isValidPath(filePath)) {
+      if (isValidFile(filePath)) {
         const fileContents = getFileContents(filePath);
         const jsonDefinition = getMetadata(fileContents);
         let content = 'return ' + JSON.stringify(jsonDefinition);
@@ -89,6 +88,7 @@ router.get('/dashboards', (req, res) => {
         const fileContents = getFileContents(filePath);
         const jsonDefinition = getMetadata(fileContents);
         let content = 'return ' + JSON.stringify(jsonDefinition);
+        console.log("content", content);
         
         // Ensuing this dashboard is loaded into the dashboards array on the page
         script += `
@@ -117,7 +117,7 @@ router.get('/dashboards/:id', (req, res) => {
 
   if (dashboardFile) {
     let filePath = path.join(privateDashboard, dashboardFile);
-    if (isValidPath(filePath)) {
+    if (isValidFile(filePath)) {
       const content = getFileContents(filePath);
 
       // Ensuing this dashboard is loaded into the dashboards array on the page
@@ -163,7 +163,7 @@ router.get('/templates/:id', (req, res) => {
 
   if (dashboardFile) {
     let filePath = path.join(preconfDashboard, dashboardFile);
-    if (isValidPath(filePath)) {
+    if (isValidFile(filePath)) {
       const content = getFileContents(filePath);
 
       // Ensuing this dashboard is loaded into the dashboards array on the page
