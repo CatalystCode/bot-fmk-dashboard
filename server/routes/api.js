@@ -19,6 +19,7 @@ const fields = {
   name: /\s*name:\s*("|')(.*)("|')/,
   description: /\s*description:\s*("|')(.*)("|')/,
   icon: /\s*icon:\s*("|')(.*)("|')/,
+  url: /\s*url:\s*("|')(.*)("|')/,
   preview: /\s*preview:\s*("|')(.*)("|')/,
   html: /\s*html:\s*(`)(.*)(`)/
 }
