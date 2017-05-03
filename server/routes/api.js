@@ -225,7 +225,7 @@ function getFileById(dir, id) {
 
         if (isValidFile(filePath)) {
           const fileContents = getFileContents(filePath);
-          const dashboardId = getField(idRegExp, fileContents);
+          const dashboardId = getField(fields.id, fileContents);
           if (dashboardId === id) {
             dashboardFile = fileName;
           }
