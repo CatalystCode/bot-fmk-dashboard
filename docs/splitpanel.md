@@ -1,6 +1,6 @@
 # SplitPanel
 
-This article explains how define a SplitPanel view control.
+A SplitPanel view control consists of a side bar of grouped items which can be selected to load up it's list of items. 
 
 ## Basic properties
 
@@ -22,8 +22,6 @@ Define `dependencies` as follows:
 | :--------|:-----|:-----------
 | `groups`| `string` | Reference to collection of grouped values   
 | `values`| `string` | Reference to values loaded from a selected group
-
-To read how to define dependencies [click here](/dependencies).
 
 #### Dependencies sample:
 

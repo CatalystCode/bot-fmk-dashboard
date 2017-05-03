@@ -19,7 +19,6 @@ There are 3 configurations for this element type
 
 ## Single value
 
-To read how to define dependencies [click here](/dependencies).
 Define `dependencies` as follows:
 
 | Property | Description 
@@ -35,7 +34,7 @@ Define `properties` as follow:
 | Property | Type | Description 
 | :--------|:-----|:------------
 | `subheading`| `string` | Large value to display
-| `onClick`| `string` | Action name [[Read about actions](/actions)]
+| `onClick`| `string` | Action name
 
 ```js
 {
@@ -56,7 +55,6 @@ Define `properties` as follow:
 
 ## Multiple values
 
-To read how to define dependencies [click here](/dependencies).
 Define `dependencies` as follows:
 
 | Property | Description 

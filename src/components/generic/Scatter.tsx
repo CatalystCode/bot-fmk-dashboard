@@ -2,17 +2,18 @@ import * as React from 'react';
 import { GenericComponent, IGenericProps, IGenericState } from './GenericComponent';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import { ScatterChart, Scatter as ScatterLine, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { ScatterChart, Scatter as ScatterLine, XAxis, YAxis, ZAxis, CartesianGrid } from 'recharts';
+import { Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Card from '../Card';
 import colors from '../colors';
 var { ThemeColors } = colors;
 
 interface IScatterProps extends IGenericProps {
-  theme?: string[],
-  xDataKey?: string,
-  yDataKey?: string,
-  zDataKey?: string,
-  zRange?: number[]
+  theme?: string[];
+  xDataKey?: string;
+  yDataKey?: string;
+  zDataKey?: string;
+  zRange?: number[];
 }
 
 interface IScatterState extends IGenericState {
@@ -22,11 +23,11 @@ interface IScatterState extends IGenericState {
 export default class Scatter extends GenericComponent<IScatterProps, IScatterState> {
 
   static defaultProps = {
-    xDataKey: "x",
-    yDataKey: "y",
-    zDataKey: "z",
+    xDataKey: 'x',
+    yDataKey: 'y',
+    zDataKey: 'z',
     zRange: [10, 1000]
-  }
+  };
 
   render() {
     var { groupedValues } = this.state;
@@ -34,10 +35,10 @@ export default class Scatter extends GenericComponent<IScatterProps, IScatterSta
     var { scatterProps, groupTitles } = props;
 
     var { xDataKey, yDataKey, zDataKey, zRange } = this.props.props;
-    if (xDataKey === undefined) xDataKey = Scatter.defaultProps.xDataKey;
-    if (yDataKey === undefined) yDataKey = Scatter.defaultProps.yDataKey;
-    if (zDataKey === undefined) zDataKey = Scatter.defaultProps.zDataKey;
-    if (zRange === undefined) zRange = Scatter.defaultProps.zRange;
+    if (xDataKey === undefined) { xDataKey = Scatter.defaultProps.xDataKey; }
+    if (yDataKey === undefined) { yDataKey = Scatter.defaultProps.yDataKey; }
+    if (zDataKey === undefined) { zDataKey = Scatter.defaultProps.zDataKey; }
+    if (zRange === undefined) { zRange = Scatter.defaultProps.zRange; }
 
     var themeColors = theme || ThemeColors;
 
@@ -49,7 +50,15 @@ export default class Scatter extends GenericComponent<IScatterProps, IScatterSta
           return;
         }
         let values = groupedValues[key];
-        let line = <ScatterLine key={idx} name={key} data={values} fill={themeColors[idx % themeColors.length]} stroke={themeColors[idx % themeColors.length]} />
+        let line = (
+          <ScatterLine
+            key={idx}
+            name={key}
+            data={values}
+            fill={themeColors[idx % themeColors.length]}
+            stroke={themeColors[idx % themeColors.length]}
+          />
+        );
         scatterLines.push(line);
         idx += 1;
       });

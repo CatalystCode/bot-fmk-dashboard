@@ -2,7 +2,7 @@ import * as React from 'react';
 import { GenericComponent, IGenericProps, IGenericState } from './GenericComponent';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Card from '../Card';
 
 import Button from 'react-md/lib/Buttons/Button';
@@ -11,51 +11,58 @@ import colors from '../colors';
 var { ThemeColors } = colors;
 
 interface ITimelineProps extends IGenericProps {
-  theme?: string[]
+  theme?: string[];
 }
 
 interface ITimelineState extends IGenericState {
-  timeFormat: string
-  values: Object[]
-  lines: Object[]
+  timeFormat: string;
+  values: Object[];
+  lines: Object[];
 }
 
 export default class Timeline extends GenericComponent<ITimelineProps, ITimelineState> {
-  // static propTypes = {}
-  // static defaultProps = {}
 
-  dateFormat (time) {
+  dateFormat(time: string) {
     return moment(time).format('MMM-DD');
   }
-  
-  hourFormat (time) {
+
+  hourFormat(time: string) {
     return moment(time).format('HH:mm');
   }
 
   render() {
     var { timeFormat, values, lines } = this.state;
-    var { title, subtitle, theme } = this.props;
+    var { title, subtitle, theme, props } = this.props;
+    var { lineProps } = props;
 
-    var format = timeFormat === "hour" ? this.hourFormat : this.dateFormat;
+    var format = timeFormat === 'hour' ? this.hourFormat : this.dateFormat;
     var themeColors = theme || ThemeColors;
 
     var lineElements = [];
     if (values && values.length && lines) {
       lineElements = lines.map((line, idx) => {
-        return <Line key={idx} type="monotone" dataKey={line} stroke={themeColors[idx % themeColors.length]} dot={false} ticksCount={5}/>
-      })
+        return (
+          <Line
+            key={idx}
+            type="monotone"
+            dataKey={line}
+            stroke={themeColors[idx % themeColors.length]}
+            dot={false}
+            ticksCount={5}
+          />
+        );
+      });
     }
 
     return (
-      <Card title={ title }
-            subtitle={ subtitle }>
+      <Card title={title} subtitle={subtitle}>
         <ResponsiveContainer>
-          <LineChart data={values} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-            <XAxis dataKey="time" tickFormatter={format} minTickGap={20}/>
-            <YAxis type="number" domain={['dataMin', 'dataMax']}/>
-            <CartesianGrid strokeDasharray="3 3"/>
+          <LineChart data={values} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} {...lineProps}>
+            <XAxis dataKey="time" tickFormatter={format} minTickGap={20} />
+            <YAxis type="number" domain={['dataMin', 'dataMax']} />
+            <CartesianGrid strokeDasharray="3 3" />
             <Tooltip />
-            <Legend/>
+            <Legend />
             {lineElements}
           </LineChart>
         </ResponsiveContainer>

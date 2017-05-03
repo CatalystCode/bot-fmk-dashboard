@@ -22,8 +22,6 @@ Define `dependencies` as follows:
 | :--------|:-----|:-----------
 | `values`| `string` | Reference to values loaded from data source
 
-To read how to define dependencies [click here](/dependencies).
-
 #### Dependencies sample:
 
 ```js
@@ -79,7 +77,7 @@ props: {
 
 ## Actions
 
-Define each `action` as follows:
+Define each action as follows:
 
 | Property | Type | Description 
 | :--------|:-----|:-----------
