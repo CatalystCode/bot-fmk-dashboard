@@ -89,7 +89,6 @@ router.get('/dashboards', (req, res) => {
         const fileContents = getFileContents(filePath);
         const jsonDefinition = getMetadata(fileContents);
         let content = 'return ' + JSON.stringify(jsonDefinition);
-        console.log("content", content);
         
         // Ensuing this dashboard is loaded into the dashboards array on the page
         script += `
