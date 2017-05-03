@@ -1,6 +1,7 @@
 import alt, { AbstractStoreModel } from '../alt';
 
 import accountActions from '../actions/AccountActions';
+import { IDictionary } from '../types';
 
 interface IAccountStoreState {
   account: IDictionary;

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { DataSourceConnector, IDataSourceDictionary } from '../../data-sources';
+import { IDictionary, IAction } from '../../types';
 
 export interface IGenericProps {
   id?: string;

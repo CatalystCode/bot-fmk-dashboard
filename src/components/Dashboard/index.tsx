@@ -5,6 +5,7 @@ import Toolbar from 'react-md/lib/Toolbars';
 import Button from 'react-md/lib/Buttons';
 import Dialog from 'react-md/lib/Dialogs';
 import { Spinner } from '../Spinner';
+import { IDashboardConfig, IDict, ILayouts } from '../../types';
 
 import * as ReactGridLayout from 'react-grid-layout';
 var ResponsiveReactGridLayout = ReactGridLayout.Responsive;

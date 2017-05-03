@@ -5,6 +5,7 @@ import ConfigDashboard from '../components/ConfigDashboard';
 
 import ConfigurationsActions from '../actions/ConfigurationsActions';
 import ConfigurationsStore from '../stores/ConfigurationsStore';
+import { IDashboardConfig, IConnections } from '../types';
 
 interface IDashboardState {
   dashboard?: IDashboardConfig;

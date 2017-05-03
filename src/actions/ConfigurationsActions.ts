@@ -1,4 +1,5 @@
 import alt, { AbstractActions } from '../alt';
+import { IDashboardConfig } from '../types';
 import * as request from 'xhr-request';
 
 interface IConfigurationsActions {

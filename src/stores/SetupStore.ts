@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import connections from '../data-sources/connections';
 import { DataSourceConnector, IDataSourceDictionary } from '../data-sources';
 import SetupActions from '../actions/SetupActions';
+import { ISetupConfig } from '../types';
 
 interface ISetupStoreState extends ISetupConfig {
   loaded: boolean;

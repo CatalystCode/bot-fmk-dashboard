@@ -10,6 +10,8 @@ import InfoDrawer from '../common/InfoDrawer';
 import SetupActions from '../../actions/SetupActions';
 import SetupStore from '../../stores/SetupStore';
 
+import { ISetupConfig } from '../../types';
+
 interface ISetupState extends ISetupConfig {
   validEmail?: boolean;
   loaded?: boolean;

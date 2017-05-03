@@ -1,4 +1,5 @@
 import alt, { AbstractActions } from '../alt';
+import { IDictionary } from '../types';
 
 interface IConnectionsActions {
   updateConnection(connectionName: string, args: IDictionary): any;

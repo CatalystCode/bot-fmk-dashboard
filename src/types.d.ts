@@ -1,50 +1,110 @@
-type IDict<T> = { [id: string]: T };
-type IDictionary = IDict<any>;
+export type IDict<T> = { [id: string]: T };
+export type IDictionary = IDict<any>;
 type IStringDictionary = IDict<string>;
 
 type IConnection = IStringDictionary; 
-type IConnections = IDict<IConnection>;
+export type IConnections = IDict<IConnection>;
 
-interface IDashboardConfig extends IDataSourceContainer, IElementsContainer {
+export interface IDataSource {
+  type: string,
+  id: string,
+  dependencies?: IStringDictionary,
+  params?: IDictionary,
+  calculated?: (state: any, dependencies?: any, prevState?: any) => IDictionary
+}
+
+interface ConstantDataSource extends IDataSource {
+  type: 'Constant',
+  params: {
+    values: string[],
+    selectedValue: string
+  }
+}
+
+interface AIQuery {
+  (dependencies: any): string;
+}
+
+interface AIMapping {
+  (value: any, row: any, idx: number): string;
+}
+
+interface AIDataSource extends IDataSource {
+  type: 'ApplicationInsights/Query',
+  dependencies: {
+    queryTimespan: string,
+    timespan?: string,
+    granularity?: string
+    selectedChannels?: string,
+    selectedIntents?: string
+  },
+  params: {
+    table: string,
+    queries: IDict<{
+      query: AIQuery,
+      mappings: IDict<AIMapping>,
+      filters: Array<IStringDictionary>,
+      calculated: (state: any, dependencies?: any, prevState?: any) => any
+    }>,
+  } | {
+    query: AIQuery,
+    mapping: AIMapping
+  };
+}
+
+type DataSource = ConstantDataSource | AIDataSource | IDataSource;
+
+export interface IDataSourceContainer {
+  dataSources: DataSource[]
+}
+
+interface Sizes<T> {
+  lg?: T,
+  md?: T,
+  sm?: T,
+  xs?: T,
+  xxs?: T
+}
+
+export interface ILayout { 
+  "i": string,
+  "x": number,
+  "y": number,
+  "w": number,
+  "h": number,
+  minW: number,
+  maxW: number,
+  minH: number,
+  maxH: number,
+  moved: boolean,
+  static: boolean,
+  isDraggable: boolean,
+  isResizable: boolean
+}
+
+export type ILayouts = Sizes<ILayout[]>;
+
+export interface IDashboardConfig extends IDataSourceContainer, IElementsContainer {
   id: string,
   name: string,
-  icon: string,
+  icon?: string,
   url: string,
   description?: string,
   preview?: string,
   config: {
     connections: IConnections,
     layout: {
-      isDraggable?: boolean
-      isResizable?: boolean
-      rowHeight?: number
-      // This turns off compaction so you can place items wherever.
-      verticalCompact?: boolean
-      cols: { lg?: number, md?: number, sm?: number, xs?: number, xxs?: number }
-      breakpoints: { lg?: number, md?: number, sm?: number, xs?: number, xxs?: number },
-      layouts: { lg?: any, md?: any, sm?: any, xs?: any, xxs?: any }
+      isDraggable?: boolean,
+      isResizable?: boolean,
+      rowHeight?: number,
+      verticalCompact?: boolean, // Turns off compaction so you can place items wherever.
+      cols: Sizes<number>,
+      breakpoints: Sizes<number>,
+      layouts: ILayouts
     }
   },
   filters: IFilter[]
   dialogs: IDialog[]
-}
-
-interface ILayout { 
-  "i": string
-  "x": number
-  "y": number
-  "w": number
-  "h": number 
-}
-
-interface ILayouts { [id: string]: ILayout[] }
-
-interface IDataSource {
-  id: string
-  type: string
-  dependencies?: { [id: string]: string }
-  params?: { [id: string]: any }
-  calculated?: (state, dependencies, prevState) => { [index: string]: any }
 }
 
 interface IElement {
@@ -54,41 +114,37 @@ interface IElement {
   title?: string
   subtitle?: string
   theme?: string[]
-  dependencies?: { [id: string]: string }
-  props?: { [id: string]: any }
-  actions?: { [id: string]: any }
+  dependencies?: IStringDictionary,
+  props?: IDictionary,
+  actions?: IDictionary
 }
 
 interface IFilter {
-  type: string
-  dependencies?: { [id: string]: string }
-  actions?: { [id: string]: string }
-  title?: string
-  subtitle?: string
-  icon?: string
+  type: string,
+  dependencies?: IStringDictionary,  
+  actions?: IStringDictionary,
+  title?: string,
+  subtitle?: string,
+  icon?: string,
   first: boolean
 }
 
-interface IElementsContainer {
+export interface IElementsContainer {
   elements: IElement[]  
 }
 
-interface IDataSourceContainer {
-  dataSources: IDataSource[]
-}
-
-interface IDialog extends IDataSourceContainer, IElementsContainer {
+export interface IDialog extends IDataSourceContainer, IElementsContainer {
   id: string
   width?: string | number
   params: string[]
 }
 
-type IAction = string | {
-  action: string
-  params: { [id: string]: string }
+export type IAction = string | {
+  action: string,
+  params: IStringDictionary
 }
 
-interface ISetupConfig {
+export interface ISetupConfig {
   stage: string;
   admins: string[];
   enableAuthentication: boolean;

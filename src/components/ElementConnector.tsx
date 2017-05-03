@@ -5,6 +5,7 @@ import plugins from './generic/plugins';
 import { DataSourceConnector } from '../data-sources/DataSourceConnector';
 import VisibilityActions from '../actions/VisibilityActions';
 import VisibilityStore from '../stores/VisibilityStore';
+import { IDashboardConfig, ILayout, ILayouts, IElementsContainer } from '../types';
 
 export default class ElementConnector {
   static loadLayoutFromDashboard(elementsContainer: IElementsContainer, dashboard: IDashboardConfig): ILayouts {

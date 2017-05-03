@@ -1,6 +1,7 @@
 
 import * as _ from 'lodash';
 import {DataSourcePlugin, IOptions} from './DataSourcePlugin';
+import { IDict, IDictionary, IStringDictionary } from '../../types';
 
 interface IConstantParams {
   values: Array<string>;

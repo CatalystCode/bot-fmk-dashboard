@@ -1,5 +1,7 @@
 import alt, { AbstractActions } from '../alt';
+import { IDictionary } from '../types';
 import * as request from 'xhr-request';
+
 
 interface IAccountActions {
   failure(error: any): any;

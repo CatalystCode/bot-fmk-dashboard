@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { IDashboardConfig, IDictionary, ILayouts, IDialog, IDataSource } from '../../../types';
+
 import { DataSourceConnector, IDataSourceDictionary } from '../../../data-sources'
 import ElementConnector from  '../../ElementConnector';
 

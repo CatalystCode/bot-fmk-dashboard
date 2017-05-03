@@ -1,6 +1,7 @@
 import alt, { AbstractStoreModel } from '../alt';
 
 import connectionsActions from '../actions/ConnectionsActions';
+import { IDictionary } from '../types';
 
 interface IConnectionsStoreState {
   connections: IDictionary;

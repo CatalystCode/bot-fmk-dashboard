@@ -5,6 +5,7 @@ import DialogsActions from '../components/generic/Dialogs/DialogsActions';
 
 import VisibilityActions from '../actions/VisibilityActions';
 import VisibilityStore from '../stores/VisibilityStore';
+import { IDictionary, IStringDictionary, IConnections, IDataSourceContainer } from '../types';
 
 export interface IDataSource {
   id: string;
