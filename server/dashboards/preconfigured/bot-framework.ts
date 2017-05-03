@@ -1,9 +1,9 @@
-return {
-  id: 'bot_analytics_dashboard_no_modes',
-  name: 'BAD - No Modes',
+import { IDashboardConfig } from '../../../src/types'; import * as _ from 'lodash'; export const config: IDashboardConfig = {
+  id: 'bot_analytics_dashboard',
+  name: 'Bot Analytics Dashboard',
   icon: "dashboard",
 	url: "bot_analytics_dashboard",
-  description: 'Microsoft Bot Framework without modes',
+  description: 'Microsoft Bot Framework based analytics',
   preview: '/images/bot-framework-preview.png',
   config: {
     connections: { },
@@ -392,6 +392,20 @@ return {
       }
     },
     {
+			id: "modes",
+			type: "Constant",
+			params: {
+				values: ["messages","users"],
+				selectedValue: "messages"
+			},
+			calculated: (state, dependencies) => {
+        let flags = {};
+				flags['messages'] = (state.selectedValue === 'messages');
+				flags['users'] 		= (state.selectedValue !== 'messages');
+        return flags;
+      }
+		},
+    {
       id: "filters",
       type: "ApplicationInsights/Query",
       dependencies: {
@@ -412,12 +426,17 @@ return {
               channel: (val) => val || "unknown",
               channel_count: (val) => val || 0
             },
-            calculated: (filterChannels) => {
+            calculated: (filterChannels, dependencies, prevState) => {
+
+              // This code is meant to fix the following scenario:
+              // When "Timespan" filter changes, to "channels-selected" variable
+              // is going to be reset into an empty set.
+              // For this reason, using previous state to copy filter
               const filters = filterChannels.map((x) => x.channel);
-              let { selectedValues } = filterChannels;
-              if (selectedValues === undefined) {
-                selectedValues = [];
-              }
+              let selectedValues = [];
+              if (prevState['channels-selected'] !== undefined) {
+								selectedValues = prevState['channels-selected'];
+							}
               return {
                 "channels-count": filterChannels,
                 "channels-filters": filters,
@@ -435,12 +454,12 @@ return {
               intent: (val) => val || "unknown",
               intent_count: (val) => val || 0
             },
-            calculated: (filterIntents) => {
+            calculated: (filterIntents, dependencies, prevState) => {
               const intents = filterIntents.map((x) => x.intent);
-              let { selectedValues } = filterIntents;
-              if (selectedValues === undefined) {
-                selectedValues = [];
-              }
+              let selectedValues = [];
+              if (prevState['intents-selected'] !== undefined) {
+								selectedValues = prevState['intents-selected'];
+							}
               return {
                 "intents-count": filterIntents,
                 "intents-filters": intents,
@@ -557,6 +576,64 @@ return {
 								"timeline-channelUsage": channelUsage,
 								"timeline-timeFormat": (timespan === "24 hours" ? 'hour' : 'date'),
 								"timeline-channels": channels
+							};
+						}
+					},
+          users_timeline: {
+						query: (dependencies) => {
+							var { granularity } = dependencies;
+							return `` +
+                  ` where name == 'Activity' |` +
+                  ` summarize count=dcount(tostring(customDimensions.from)) by bin(timestamp, ${granularity}), name, channel=tostring(customDimensions.channel) |` +
+                  ` order by timestamp asc`
+						},
+						mappings: {
+							channel: (val) => val || "unknown",
+							count: (val) => val || 0
+						},
+						filters: [{
+              dependency: "selectedChannels",
+              queryProperty: "customDimensions.channel"
+            }],
+						calculated: (timeline, dependencies) => {
+
+							// Timeline handling
+							// =================
+
+							let _timeline = {};
+							let _channels = {};
+							let { timespan } = dependencies;
+
+							timeline.forEach(row => {
+								var { channel, timestamp, count } = row;
+								var timeValue = (new Date(timestamp)).getTime();
+
+								if (!_timeline[timeValue]) _timeline[timeValue] = {
+									time: (new Date(timestamp)).toUTCString()
+								};
+								if (!_channels[channel]) _channels[channel] = {
+									name: channel,
+									value: 0
+								};
+
+								_timeline[timeValue][channel] = count;
+								_channels[channel].value += count;
+							});
+
+							var channels = Object.keys(_channels);
+							var channelUsage = _.values(_channels);
+							var timelineValues = _.map(_timeline, value => {
+								channels.forEach(channel => {
+									if (!value[channel]) value[channel] = 0;
+								});
+								return value;
+							});
+
+							return {
+								"timeline-users-graphData": timelineValues,
+								"timeline-users-channelUsage": channelUsage,
+								"timeline-users-timeFormat": (timespan === "24 hours" ? 'hour' : 'date'),
+								"timeline-users-channels": channels
 							};
 						}
 					},
@@ -694,10 +771,18 @@ return {
   filters: [
     {
       type: "TextFilter",
+			title: "Timespan",
       dependencies: { selectedValue: "timespan", values: "timespan:values" },
       actions: { onChange: "timespan:updateSelectedValue" },
       first: true
     },
+    {
+			type: "TextFilter",
+			title: "Mode",
+			dependencies: { selectedValue: "modes", values: "modes:values" },
+			actions: { onChange: "modes:updateSelectedValue" },
+			first: true
+		},
     {
       type: "MenuFilter",
       title: "Channels",
@@ -734,19 +819,34 @@ return {
       title: "Message Rate",
       subtitle: "How many messages were sent per timeframe",
       size: { w: 5, h: 8 },
-      dependencies: { values: "ai:timeline-graphData", lines: "ai:timeline-channels", timeFormat: "ai:timeline-timeFormat" }
-    }, 
+      dependencies: { visible: "modes:messages", values: "ai:timeline-graphData", lines: "ai:timeline-channels", timeFormat: "ai:timeline-timeFormat" }
+    },
+    {
+			id: "timeline",
+			type: "Timeline",
+			title: "Users Rate",
+			subtitle: "How many users were sent per timeframe",
+			size: { w: 5, h: 8 },
+			dependencies: { visible: "modes:users", values: "ai:timeline-users-graphData", lines: "ai:timeline-users-channels", timeFormat: "ai:timeline-users-timeFormat" }
+		},
     {
       id: "channels",
       type: "PieData",
       title: "Channel Usage",
       subtitle: "Total messages sent per channel",
       size: { w: 3, h: 8 },
-      dependencies: { values: "ai:timeline-channelUsage" },
-      props: { 
-        showLegend: false 
-      }
-    }, 
+      dependencies: { visible: "modes:messages", values: "ai:timeline-channelUsage" },
+      props: { showLegend: false, compact: true }
+    },
+    {
+			id: "channels",
+			type: "PieData",
+			title: "Channel Usage (Users)",
+			subtitle: "Total users sent per channel",
+			size: { w: 3, h: 8 },
+			dependencies: { visible: "modes:users", values: "ai:timeline-users-channelUsage" },
+			props: { showLegend: false, compact: true }
+		},
     {
 			id: "scores",
 			type: "Scorecard",

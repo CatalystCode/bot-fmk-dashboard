@@ -2,49 +2,104 @@ type IDict<T> = { [id: string]: T };
 type IDictionary = IDict<any>;
 type IStringDictionary = IDict<string>;
 
-type IConnection = IStringDictionary; 
-type IConnections = IDict<IConnection>;
+interface IDataSource {
+  type: string,
+  id: string,
+  dependencies?: IStringDictionary,
+  params?: IDictionary,
+  calculated?: (state: any, dependencies?: any, prevState?: any) => IDictionary
+}
 
-interface IDashboardConfig extends IDataSourceContainer, IElementsContainer {
+interface ConstantDataSource extends IDataSource {
+  type: 'Constant',
+  params: {
+    values: string[],
+    selectedValue: string
+  }
+}
+
+interface AIQuery {
+  (dependencies: any): string;
+}
+
+interface AIMapping {
+  (value: any, row: any, idx: number): string;
+}
+
+interface AIDataSource extends IDataSource {
+  type: 'ApplicationInsights/Query',
+  dependencies: {
+    queryTimespan: string,
+    timespan?: string,
+    granularity?: string
+    selectedChannels?: string,
+    selectedIntents?: string
+  },
+  params: {
+    table: string,
+    queries: IDict<{
+      query: AIQuery,
+      mappings: IDict<AIMapping>,
+      filters: Array<IStringDictionary>,
+      calculated: (state: any, dependencies: any, prevState: any) => any
+    }>,
+  } | {
+    query: AIQuery,
+    mapping: AIMapping
+  };
+}
+
+type DataSource = ConstantDataSource | AIDataSource | IDataSource;
+
+interface IDataSourceContainer {
+  dataSources: DataSource[]
+}
+
+interface Sizes<T> {
+  lg?: T,
+  md?: T,
+  sm?: T,
+  xs?: T,
+  xxs?: T
+}
+
+interface ILayout { 
+  "i": string,
+  "x": number,
+  "y": number,
+  "w": number,
+  "h": number,
+  minW: number,
+  maxW: number,
+  minH: number,
+  maxH: number,
+  moved: boolean,
+  static: boolean,
+  isDraggable: boolean,
+  isResizable: boolean
+}
+
+export interface IDashboardConfig extends IDataSourceContainer, IElementsContainer {
   id: string,
   name: string,
-  icon: string,
+  icon?: string,
   url: string,
   description?: string,
   preview?: string,
   config: {
-    connections: IConnections,
+    connections: IDict<IStringDictionary>,
     layout: {
-      isDraggable?: boolean
-      isResizable?: boolean
-      rowHeight?: number
-      // This turns off compaction so you can place items wherever.
-      verticalCompact?: boolean
-      cols: { lg?: number, md?: number, sm?: number, xs?: number, xxs?: number }
-      breakpoints: { lg?: number, md?: number, sm?: number, xs?: number, xxs?: number },
-      layouts: { lg?: any, md?: any, sm?: any, xs?: any, xxs?: any }
+      isDraggable?: boolean,
+      isResizable?: boolean,
+      rowHeight?: number,
+      verticalCompact?: boolean, // Turns off compaction so you can place items wherever.
+      cols: Sizes<number>,
+      breakpoints: Sizes<number>,
+      layouts: Sizes<ILayout[]>
     }
   },
   filters: IFilter[]
   dialogs: IDialog[]
-}
-
-interface ILayout { 
-  "i": string
-  "x": number
-  "y": number
-  "w": number
-  "h": number 
-}
-
-interface ILayouts { [id: string]: ILayout[] }
-
-interface IDataSource {
-  id: string
-  type: string
-  dependencies?: { [id: string]: string }
-  params?: { [id: string]: any }
-  calculated?: (state, dependencies, prevState) => { [index: string]: any }
 }
 
 interface IElement {
@@ -54,27 +109,23 @@ interface IElement {
   title?: string
   subtitle?: string
   theme?: string[]
-  dependencies?: { [id: string]: string }
-  props?: { [id: string]: any }
-  actions?: { [id: string]: any }
+  dependencies?: IStringDictionary,
+  props?: IDictionary,
+  actions?: IDictionary
 }
 
 interface IFilter {
-  type: string
-  dependencies?: { [id: string]: string }
-  actions?: { [id: string]: string }
-  title?: string
-  subtitle?: string
-  icon?: string
+  type: string,
+  dependencies?: IStringDictionary,  
+  actions?: IStringDictionary,
+  title?: string,
+  subtitle?: string,
+  icon?: string,
   first: boolean
 }
 
 interface IElementsContainer {
   elements: IElement[]  
-}
-
-interface IDataSourceContainer {
-  dataSources: IDataSource[]
 }
 
 interface IDialog extends IDataSourceContainer, IElementsContainer {
@@ -84,8 +135,8 @@ interface IDialog extends IDataSourceContainer, IElementsContainer {
 }
 
 type IAction = string | {
-  action: string
-  params: { [id: string]: string }
+  action: string,
+  params: IStringDictionary
 }
 
 interface ISetupConfig {
