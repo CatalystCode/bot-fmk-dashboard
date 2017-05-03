@@ -673,6 +673,7 @@ return {
 							};
 						}
           },
+          // BUILT INTO AI -Activity- 
           channelActivity: {
             query: () => `` + 
                     ` where name == 'Activity' | ` + 
@@ -724,7 +725,19 @@ return {
 					}
 				}
       }
-		},
+		},    
+    {
+      id: "timeline-user-messages",
+      type: "ApplicationInsights/Query",
+      dependencies: { timespan: "timespan", queryTimespan: "timespan:queryTimespan" },
+      params: {
+        query: () => ` exceptions` +
+            ` | summarize count_error=count() by handledAt, innermostMessage` +
+            ` | order by count_error desc `,
+        mappings: { }
+      },
+      calculated: (state) => { }
+    },
     {
       id: "errors",
       type: "ApplicationInsights/Query",
@@ -766,6 +779,32 @@ return {
           handledAtUncaught
         };
       }
+    },
+    {
+      id: "user-retention",
+      type: "ApplicationInsights/Query",
+      dependencies: { timespan: "timespan", queryTimespan: "timespan:queryTimespan" },
+      params: {
+        query: () => ` exceptions` +
+            ` | summarize count_error=count() by handledAt, innermostMessage` +
+            ` | order by count_error desc `,
+        mappings: { }
+      },
+      calculated: (state) => { }
+    },
+    {
+      id: "total-users",
+      type: "ApplicationInsights/Query",
+      dependencies: { timespan: "timespan", queryTimespan: "timespan:queryTimespan" },
+      params: { //Top 10 countries by traffic in the past 24 hours
+        query: () => ` requests` +
+            `| where  timestamp > ago(24h)` +
+            `| summarize count() by client_CountryOrRegion ` +
+            `| top 10 by count_` +
+            `| render piechart` ,
+        mappings: { }
+      },
+      calculated: (state) => { }
     }
   ],
   filters: [
