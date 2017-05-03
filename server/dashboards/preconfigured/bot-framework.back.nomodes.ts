@@ -1,5 +1,4 @@
 import { IDashboardConfig } from '../../../src/types'; import * as _ from 'lodash'; export const config: IDashboardConfig = {
-// return {
   id: 'bot_analytics_dashboard_no_modes',
   name: 'BAD - No Modes',
   icon: "dashboard",
