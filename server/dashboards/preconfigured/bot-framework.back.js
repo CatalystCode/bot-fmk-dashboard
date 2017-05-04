@@ -366,6 +366,18 @@ return {
         showLegend: false
       }
     },
+        {
+      id: "map-area",
+      type: "Area",
+      title: "Message Rate",
+      subtitle: "How many messages were sent per timeframe",
+      size: { w: 4, h: 8 },
+      dependencies: { values: "ai:timeline-graphData", lines: "ai:timeline-channels", timeFormat: "ai:timeline-timeFormat" },
+      props: {
+        isStacked: true,
+        showLegend: false
+      }
+    },
     {
       id: 'scatter',
       type: 'Scatter',
