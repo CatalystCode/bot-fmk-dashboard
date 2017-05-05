@@ -2871,7 +2871,14 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
-leaflet.markercluster@^1.0.4:
+leaflet-geosearch@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/leaflet-geosearch/-/leaflet-geosearch-2.2.0.tgz#43fababd4d148d640112b9fe0004056a8678b099"
+  dependencies:
+    lodash.debounce "^4.0.8"
+    nodent-runtime "^3.0.4"
+
+leaflet.markercluster@^1.0.4, leaflet.markercluster@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/leaflet.markercluster/-/leaflet.markercluster-1.0.5.tgz#12fde61630f4eb3146d92b56a36fdff903d1e023"
 
@@ -2982,6 +2989,10 @@ lodash.clonedeep@^3.0.0:
 lodash.clonedeep@^4.3.2:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
+
+lodash.debounce@^4.0.8:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
 
 lodash.isarguments@^3.0.0:
   version "3.1.0"
@@ -3428,6 +3439,10 @@ node-sass@^4.5.0:
     request "^2.61.0"
     sass-graph "^2.1.1"
     stdout-stream "^1.4.0"
+
+nodent-runtime@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/nodent-runtime/-/nodent-runtime-3.0.4.tgz#a801ecb7bb0f6c39a69b24cc2fa370cfa8b492da"
 
 "nopt@2 || 3", nopt@~3.0.6:
   version "3.0.6"
