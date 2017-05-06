@@ -67,14 +67,13 @@ Thinking about integrating with:
 ```bash
 git clone https://github.com/CatalystCode/ibex-dashboard.git
 cd ibex-dashboard
-npm install -g create-react-app
 npm install -g yarn
-yarn install
+yarn
 ```
 
 ### Dev
 ```bash
-yarn run start:dev
+yarn start:dev
 ```
 
 ### Test Watcher
@@ -82,12 +81,12 @@ Runs the test watcher in an interactive mode.
 By default, runs tests related to files changes since the last commit.
 
 ```bash
-npm test
+yarn test
 ```
 
 ### Build for Production
 ```bash
-npm run build
+yarn build
 ```
 
 ## What’s Inside?

@@ -44,12 +44,12 @@
   },
   "scripts": {
     "css:build": "node-sass src/ -o src/",
-    "css:watch": "yarn run css:build && node-sass src/ -o src/ --watch --recursive",
+    "css:watch": "yarn css:build && node-sass src/ -o src/ --watch --recursive",
     "server:start": "yarn start",
     "client:start": "react-scripts-ts start",
     "start:dev": "npm-run-all -p css:watch server:start client:start",
     "start": "node server",
-    "build": "npm run css:build && react-scripts-ts build",
+    "build": "yarn css:build && react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom"
   }
 }
