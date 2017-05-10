@@ -48,15 +48,16 @@ interface IDataSource {
 }
 
 interface IElement {
-  id: string
-  type: string
-  size: { w: number, h: number }
-  title?: string
-  subtitle?: string
-  theme?: string[]
-  dependencies?: { [id: string]: string }
-  props?: { [id: string]: any }
-  actions?: { [id: string]: any }
+  id: string;
+  type: string;
+  size: { w: number, h: number };
+  location?: { x: number, y: number };
+  title?: string;
+  subtitle?: string;
+  theme?: string[];
+  dependencies?: { [id: string]: string };
+  props?: { [id: string]: any };
+  actions?: { [id: string]: any };
 }
 
 interface IFilter {

@@ -150,8 +150,8 @@ export default class PieData extends GenericComponent<IPieProps, IPieState> {
               {...pieProps}
             >
               {values.map((entry, index) => <Cell key={index} fill={themeColors[index % themeColors.length]} />)}
-              <Cell key={0} fill={colors.GoodColor} />
-              <Cell key={1} fill={colors.BadColor} />
+              <Cell key={100} fill={colors.GoodColor} />
+              <Cell key={101} fill={colors.BadColor} />
             </Pie>
             {
               showLegend !== false && (

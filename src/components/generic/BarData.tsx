@@ -52,8 +52,15 @@ export default class BarData extends GenericComponent<IBarProps, IBarState> {
     var barElements = [];
     if (values && values.length && bars) {
       barElements = bars.map((bar, idx) => {
-        return <Bar key={idx} dataKey={bar} fill={ThemeColors[idx]} onClick={this.handleClick} />;
-      });
+        return (
+          <Bar 
+            key={idx} 
+            stackId='1' 
+            dataKey={bar.name || bar} 
+            fill={bar.color || ThemeColors[idx]} 
+            onClick={this.handleClick} 
+          />
+        )
     }
 
     // Todo: Receive the width of the SVG component from the container

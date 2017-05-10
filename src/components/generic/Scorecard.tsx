@@ -31,7 +31,7 @@ export default class Scorecard extends GenericComponent<IScorecardProps, any> {
   }
 
   shortFormatter(num: any): string {
-    if (typeof num !== 'number') { return num; }
+    if (isNaN(num)) { return num; }
 
     return (
       num > 999999 ?
