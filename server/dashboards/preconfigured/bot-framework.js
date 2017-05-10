@@ -673,6 +673,7 @@ return {
 							};
 						}
           },
+          // BUILT INTO AI -Activity- 
           channelActivity: {
             query: () => `` + 
                     ` where name == 'Activity' | ` + 
@@ -724,7 +725,19 @@ return {
 					}
 				}
       }
-		},
+		},    
+    {
+      id: "timeline-user-messages",
+      type: "ApplicationInsights/Query",
+      dependencies: { timespan: "timespan", queryTimespan: "timespan:queryTimespan" },
+      params: {
+        query: () => ` exceptions` +
+            ` | summarize count_error=count() by handledAt, innermostMessage` +
+            ` | order by count_error desc `,
+        mappings: { }
+      },
+      calculated: (state) => { }
+    },
     {
       id: "errors",
       type: "ApplicationInsights/Query",
@@ -766,6 +779,32 @@ return {
           handledAtUncaught
         };
       }
+    },
+    {
+      id: "user-retention",
+      type: "ApplicationInsights/Query",
+      dependencies: { timespan: "timespan", queryTimespan: "timespan:queryTimespan" },
+      params: {
+        query: () => ` exceptions` +
+            ` | summarize count_error=count() by handledAt, innermostMessage` +
+            ` | order by count_error desc `,
+        mappings: { }
+      },
+      calculated: (state) => { }
+    },
+    {
+      id: "total-users",
+      type: "ApplicationInsights/Query",
+      dependencies: { timespan: "timespan", queryTimespan: "timespan:queryTimespan" },
+      params: { //Top 10 countries by traffic in the past 24 hours
+        query: () => ` requests` +
+            `| where  timestamp > ago(24h)` +
+            `| summarize count() by client_CountryOrRegion ` +
+            `| top 10 by count_` +
+            `| render piechart` ,
+        mappings: { }
+      },
+      calculated: (state) => { }
     }
   ],
   filters: [
@@ -871,6 +910,7 @@ return {
 				card_users_value: "ai:users-value",
 				card_users_heading: "::Total Users",
 				card_users_icon: "ai:users-icon",
+				card_users_onClick: "::onUsersClick",
 
 				card_conversions_value: "ai:conversions-rate",
 				card_conversions_heading: "::Conversions",
@@ -884,6 +924,13 @@ return {
 						title: "args:heading",
 						type: "args:type",
 						innermostMessage: "args:innermostMessage",
+						queryspan: "timespan:queryTimespan"
+					}
+				},
+				onUsersClick: {
+					action: "dialog:userRentention",
+					params: {
+						title: "args:heading",
 						queryspan: "timespan:queryTimespan"
 					}
 				}
@@ -935,7 +982,43 @@ return {
         zDataKey: "count",
         zRange: [10,500]
       }
-    }
+    },
+    {
+			id: "radar",
+			type: "RadarChartCard",
+			title: "NFL and NBA Intents Radar",
+			subtitle: "Intent Count",
+			size: {
+				w: 4,
+				h: 8
+			},
+			dependencies: { },
+			props: { }
+		},
+    {
+			id: "simpleradial",
+			type: "SimpleRadialBarChartCard",
+			title: "Simpl Radial Intent Count",
+			subtitle: "Total numbef of engagment with each intent",
+			size: {
+				w: 4,
+				h: 8
+			},
+			dependencies: { },
+			props: { }
+		},
+    {
+			id: "radial",
+			type: "RadialBarChartCard",
+			title: "Radial Intent Count",
+			subtitle: "Total numbef of engagment with each intent",
+			size: {
+				w: 4,
+				h: 8
+			},
+			dependencies: {	},
+			props: { }
+		}
   ],
   dialogs: [
     {
@@ -1191,6 +1274,84 @@ return {
           }]
         }
       }]
-    }
-  ]
+    },
+		{
+			id: "userRentention",
+			width: "90%",
+			params: ["title", "queryspan"],
+			dataSources: [
+				{
+					id: "userRententionDatasource",
+					type: "ApplicationInsights/Query",
+					dependencies: {
+						queryTimespan: "dialog_userRentention:queryspan"
+					},
+					params: {   
+						query: ({ queryTimespan }) => ` customEvents |
+							where timestamp > ago(90d) |
+							extend uniqueUser=tostring(customDimensions.from) |
+							summarize firstUsedAppTimeStamp=min(timestamp), lastUsedAppTimeStamp=max(timestamp) by uniqueUser |
+							summarize
+									totalUniquesUsersIn90d = count(uniqueUser),
+									totalUniquesUsersIn24hr = countif(lastUsedAppTimeStamp > ago(24hr) and firstUsedAppTimeStamp <= ago(24hr)),
+									totalUniquesUsersIn7d = countif(lastUsedAppTimeStamp > ago(7d) and firstUsedAppTimeStamp <= ago(7d)),
+									totalUniquesUsersIn30d = countif(lastUsedAppTimeStamp > ago(30d) and firstUsedAppTimeStamp <= ago(30d)),
+									rententionOver24hr = floor( ((countif(lastUsedAppTimeStamp > ago(24hr) and firstUsedAppTimeStamp <= ago(24hr))) / (count(uniqueUser)) * 100) , 1),
+									rententionOver7d = floor( ((countif(lastUsedAppTimeStamp > ago(7d) and firstUsedAppTimeStamp <= ago(7d))) / (count(uniqueUser)) * 100) , 1),
+									rententionOver30d = floor( ((countif(lastUsedAppTimeStamp > ago(30d) and firstUsedAppTimeStamp <= ago(30d))) / (count(uniqueUser)) * 100) , 1)`,
+						mappings: { }
+					},
+					calculated: (state) => {
+						var { values } = state;
+
+						if (!values || !values.length) { return; }
+
+						let userRententionData = {};
+						userRententionData = [
+							{
+								timeSpan: "24 hours",
+								retention: values[0].rententionOver24hr,
+								uniqueUsers: values[0].totalUniquesUsersIn24hr
+							},
+							{
+								timeSpan: "7 days",
+								retention: values[0].rententionOver7d,
+								uniqueUsers: values[0].totalUniquesUsersIn7d
+							},
+							{
+								timeSpan: "30 days",
+								retention: values[0].rententionOver30d,
+								uniqueUsers: values[0].totalUniquesUsersIn30d
+							},
+						]
+						return { userRententionData };
+					}
+				}],
+			elements: [{
+					id: "user-retention-table",
+					type: "Table",
+					title: "User Retention",
+					size: {
+						w: 12,
+						h: 16
+					},
+					dependencies: {
+						values: "userRententionDatasource:userRententionData"
+					},
+					props: {
+						cols: [{
+								header: "Time Span",
+								field: "timeSpan"
+							},{
+								header: "Rentention",
+								field: "retention"
+							},{
+								header: "Unique Users",
+								field: "uniqueUsers"
+							}]
+					},
+					actions: { }
+				}]
+		}
+	]
 }
