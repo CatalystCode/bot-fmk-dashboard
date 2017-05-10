@@ -99,6 +99,20 @@ return {
 						isResizable: undefined
 					},{
 						w: 4,
+						h: 8,
+						x: 4,
+						y: 8,
+						i: "map-area",
+						minW: undefined,
+						maxW: undefined,
+						minH: undefined,
+						maxH: undefined,
+						moved: false,
+						static: false,
+						isDraggable: undefined,
+						isResizable: undefined
+					},{
+						w: 4,
 						h: 13,
 						x: 8,
 						y: 3,
@@ -183,6 +197,20 @@ return {
 						isDraggable: undefined,
 						isResizable: undefined
 					},{
+						w: 4,
+						h: 8,
+						x: 4,
+						y: 24,
+						i: "map-area",
+						minW: undefined,
+						maxW: undefined,
+						minH: undefined,
+						maxH: undefined,
+						moved: false,
+						static: false,
+						isDraggable: undefined,
+						isResizable: undefined
+					}{
 						w: 4,
 						h: 13,
 						x: 6,
@@ -269,6 +297,20 @@ return {
 						isResizable: undefined
 					},{
 						w: 4,
+						h: 8,
+						x: 0,
+						y: 39,
+						i: "map-area",
+						minW: undefined,
+						maxW: undefined,
+						minH: undefined,
+						maxH: undefined,
+						moved: false,
+						static: false,
+						isDraggable: undefined,
+						isResizable: undefined
+					},{
+						w: 4,
 						h: 13,
 						x: 0,
 						y: 18,
@@ -344,6 +386,20 @@ return {
 						x: 0,
 						y: 41,
 						i: "timeline-area",
+						minW: undefined,
+						maxW: undefined,
+						minH: undefined,
+						maxH: undefined,
+						moved: false,
+						static: false,
+						isDraggable: undefined,
+						isResizable: undefined
+					},{
+						w: 2,
+						h: 8,
+						x: 0,
+						y: 41,
+						i: "map-area",
 						minW: undefined,
 						maxW: undefined,
 						minH: undefined,
@@ -914,6 +970,18 @@ return {
       id: "timeline-area",
       type: "Area",
       title: "Message Rate",
+      subtitle: "How many messages were sent per timeframe",
+      size: { w: 4, h: 8 },
+      dependencies: { values: "ai:timeline-graphData", lines: "ai:timeline-channels", timeFormat: "ai:timeline-timeFormat" },
+      props: {
+        isStacked: true,
+        showLegend: false
+      }
+    }, 
+		{
+      id: "map-area",
+      type: "Area",
+      title: "Map Area",
       subtitle: "How many messages were sent per timeframe",
       size: { w: 4, h: 8 },
       dependencies: { values: "ai:timeline-graphData", lines: "ai:timeline-channels", timeFormat: "ai:timeline-timeFormat" },
