@@ -1,0 +1,182 @@
+@import '../node_modules/react-md/src/scss/react-md';
+
+$md-primary-color: $md-cyan-500;
+$md-secondary-color: $md-pink-a-200;
+$md-font-regular: 300;
+
+@include react-md-everything;
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+// Making sure titles are less bold
+h2, .md-subheading-2 {
+  font-weight: $md-font-regular;
+}
+
+.md-dialog.md-transition-in {
+    transform: translate3d(0px, 0px, 0px) scale(1);
+}
+
+/*=============*/
+/* Chips Style */
+/*=============*/
+.chip-list {
+  .md-chip {
+    margin: 1em 1em 0 0;
+  }
+}
+
+/*=============*/
+/* Grid Layout */
+/*=============*/
+
+/* Need this to ensure react-grid-leyout streches on the screen*/
+.layout {
+  width: 100%;
+}
+
+
+/*=============*/
+/* Card Styles */
+/*=============*/
+
+.md-card {
+  position: relative;
+  height: 100%;
+
+  &.hide-borders {
+    box-shadow: none; 
+  }
+}
+
+.md-card-title {
+  padding: 10px;
+  padding-top: 10px;
+  font-weight: $md-font-regular;
+}
+
+.md-card .md-media {
+  padding: 73px 0 0 0;
+  margin-top: -73px;
+  height: 100%;
+
+  &.md-card-scorecard {
+    padding: 0;
+    margin-top: 0;
+
+    .dash-value {
+      margin-top: 8px;
+      margin-right: 8px;
+    }
+    
+    .dash-icon {
+      margin-top: 5px;
+    }
+  }
+}
+
+.md-card {
+  .card-icon {
+    cursor: default;
+    position: relative;
+    z-index: 10;
+    float: right;
+    padding: 2px 7px;
+  }
+}
+
+.react-draggable {
+  border: 2px solid gray;
+
+  .md-card {
+    pointer-events: none;
+    opacity: 0.4;
+  }
+}
+
+.dash-error {
+  color: $md-red-500;
+}
+
+.dash-success {
+  color: $md-light-green-500;
+}
+
+/*=============*/
+/* Rechards    */
+/*=============*/
+
+.recharts-legend-item .recharts-surface {
+  bottom: auto;
+  top: auto;
+  left: auto;
+  right: auto;
+  height: auto;
+  width: auto;
+  position: static;
+}
+
+/*=============*/
+/* Data Tables */
+/*=============*/
+
+.md-data-table {
+
+  .md-table-row {
+      .md-btn--icon {
+        color: $md-secondary-color;
+        height: 30px;
+        padding: 3px 0 10px 0;
+        width: 30px;
+        visibility: hidden;
+      }
+
+    &:hover {
+      .md-btn--icon {
+        visibility: visible;
+      }
+    }
+  }
+
+  .message-send { 
+    background-color: $md-blue-50;
+
+    td.message {
+      text-align: right;
+    }
+  }
+}
+
+/*==============*/
+/* Drawer Style */
+/*==============*/
+.md-drawer {
+  .md-media {
+    b {
+      font-weight: 500;
+    }
+  }
+}
+
+/*================*/
+/* Minimal Design */
+/*================*/
+
+.md-card {
+  .md-text--secondary {
+    font-weight: 300;
+  } 
+
+  .md-media {
+    padding: 39px 0 0 0;
+    margin-top: -39px;
+  }
+
+  .widgets {
+    top: -5px;
+  }
+}

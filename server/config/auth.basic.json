@@ -1,0 +1,7 @@
+ {
+	"identityMetadata": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+	"validateIssuer": false,
+	"skipUserProfile": true,
+	"responseType": "id_token code",
+	"responseMode": "query"
+ }

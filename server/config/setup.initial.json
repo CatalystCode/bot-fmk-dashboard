@@ -1,0 +1,9 @@
+{
+  "admins": [],
+  "stage": "none",
+  "allowHttp": false,
+  "enableAuthentication": false,
+  "redirectUrl": "",
+  "clientID": "",
+  "clientSecret": ""
+}

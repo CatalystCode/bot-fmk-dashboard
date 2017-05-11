@@ -9,58 +9,35 @@ This is an application insights based project that displays a bots analytics das
 ### Show With Your Own Data
 
 1. Clone
-2. Get an Application Insights App ID and Api Key
-3. Create the following `.env` file:
+2. [Get an Application Insights App ID and Api Key](https://dev.applicationinsights.io/documentation/Authorization/API-key-and-App-ID)
 
-```bash
-REACT_APP_APP_INSIGHTS_APPID={APP ID}
-REACT_APP_APP_INSIGHTS_APIKEY={API KEY}
-```
-
-4. Run `npm start`
+4. Run `npm run start:dev`
 5. Open **http://localhost:3000/**
+6. Run through setup and afterwards, fill in **API Key** and **Application ID**
 
 ## Deploy To Azure
 
 1. Fork this repo (to be able to automatically create github deployment key)
 2. Clone & Deploy:
-
-from you new repo run:
-
-```sh 
-clone https://github.com/[your-user-name/group]/bot-fmk-dashboard
-cd bot-fmk-dashboard
-cd deploy
-cp dashboard.parameters.json dashboard.parameters.private.json
-```
-
-Edit `dashboard.parameters.private.json` and change the repo url to your own, and fix the other parameters as well.
-
-```sh
-azure login
-azure account list
-azure account set "{account id}"
-azure group create "new-resource-group" -l "West Europe" -f dashboard.template.json -e dashboard.parameters.private.json
-```
+3. [Create a new Web App in Azure](https://docs.microsoft.com/en-us/azure/app-service-web/app-service-continuous-deployment)
 
 Since application insights API doesn't support ARM yet, we need to manually [create an API Key](https://dev.applicationinsights.io/documentation/Authorization/API-key-and-App-ID) for the application insights service.
-Once you created the api key, copy and paste it into the **Web App ==> Application Settings ==> REACT_APP_APP_INSIGHTS_APIKEY**.
+Once you created the api key, copy and paste it into the **Dashboard settings screen**.
 
-3. Go to [azure portal](https://portal.azure.com)
-4. Select: **Resource Groups** > **[new resource group]** > **App Insights Service**
-5. Copy **Instrumentation Key** and paste into your bot registration page (on the bottom)
-6. Click: **API Access** > **Create New Key** > **+Read Telemetry**
-7. Copy `Application ID` + `API Key`
-8. Select: **Resource Groups** > **[new resource group]** > **Web App**
-9. Under **Application Settings** > **App Settings** set the following values:
+## Create new API Key and Application ID
 
-```bash
-REACT_APP_APP_INSIGHTS_APPID: {Application ID}
-REACT_APP_APP_INSIGHTS_APIKEY: {API Key}
-```
+The following steps explain how to connect **Application Insights** bot with your bot and your dashboard:
+[you can also follow the [official Application Insights article](https://dev.applicationinsights.io/documentation/Authorization/API-key-and-App-ID)].
 
-10. Save changes, go to **Overview** and restart the web app.
-11. Click on **URL** to see the dashboard
+1. Go to [azure portal](https://portal.azure.com)
+2. Select: **Resource Groups** > **[new resource group]** > **App Insights Service**
+3. Copy **Instrumentation Key** and paste into your bot registration page (on the bottom)
+4. Click: **API Access** > **Create New Key** > **+ Read Telemetry**
+5. Copy `Application ID` + `API Key`
+6. Open the URL of your web app
+7. Under **AppId**/**ApiKey** set the values you created.
+
+# Resources
 
 ### Used Repos Technologies
 
@@ -88,15 +65,16 @@ Thinking about integrating with:
 
 ### Installation
 ```bash
-git clone https://github.com/CatalystCode/bot-fmk-dashboard.git
-cd bot-fmk-dashboard
+git clone https://github.com/CatalystCode/ibex-dashboard.git
+cd ibex-dashboard
 npm install -g create-react-app
-npm install
+npm install -g yarn
+yarn install
 ```
 
 ### Dev
 ```bash
-npm start
+yarn run start:dev
 ```
 
 ### Test Watcher

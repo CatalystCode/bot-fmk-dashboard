@@ -1,54 +1,55 @@
 {
-  "name": "bot-fmk-dashboard",
-  "description": "This repository holds all client / front-end related code for the Microsoft/OCHA Hackfest. .",
-  "version": "0.0.1",
-  "license": "MIT",
-  "main": "./dist/js/index.min.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/CatalystCode/bot-fmk-dashboard.git"
-  },
-  "maintainers": [
-    {
-      "name": "mor shemesh",
-      "email": "mor.shemesh@gmail.com"
-    }
-  ],
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:4000/",
   "devDependencies": {
-    "@types/alt": "^0.16.31",
-    "@types/lodash": "^4.14.48",
-    "@types/react-dom": "^0.14.20",
-    "mocha": "^3.1.2",
-    "react-scripts": "^0.6.0"
+    "@types/alt": "^0.16.32",
+    "@types/jest": "^19.2.2",
+    "@types/lodash": "^4.14.55",
+    "@types/nock": "^8.2.1",
+    "@types/node": "^7.0.8",
+    "@types/react": "^15.0.16",
+    "@types/react-addons-test-utils": "^0.14.17",
+    "@types/react-dom": "^0.14.23",
+    "@types/react-router": "^3.0.8",
+    "nock": "^9.0.9",
+    "node-sass": "^4.5.0",
+    "npm-run-all": "^4.0.2",
+    "react-addons-test-utils": "^15.4.2",
+    "react-scripts-ts": "1.1.6"
   },
   "dependencies": {
     "alt": "^0.18.6",
     "alt-utils": "^1.0.0",
-    "classnames": "^2.2.5",
-    "jquery": "^3.1.1",
-    "lodash": "^4.17.2",
-    "async": "^2.0.1",
-    "material-ui": "^0.16.5",
-    "moment": "^2.17.1",
-    "react": "^15.4.1",
-    "react-addons-create-fragment": "^15.4.1",
-    "react-dom": "^15.4.1",
-    "react-infinite": "^0.10.0",
-    "react-list-view": "^1.0.0",
-    "react-grid-layout": "^0.13.9",
-    "react-router": "^3.0.0",
-    "react-tap-event-plugin": "^2.0.1",
-    "recharts": "^0.19.1",
-    "request": "^2.78.0"
+    "body-parser": "^1.17.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.2",
+    "express-session": "^1.15.2",
+    "lodash": "^4.17.4",
+    "material-colors": "^1.2.5",
+    "moment": "^2.18.0",
+    "morgan": "^1.8.1",
+    "passport": "^0.3.2",
+    "passport-azure-ad": "^3.0.5",
+    "react": "^15.4.2",
+    "react-addons-css-transition-group": "^15.4.2",
+    "react-addons-transition-group": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-grid-layout": "^0.14.4",
+    "react-md": "^1.0.10",
+    "react-router": "3.0.0",
+    "recharts": "^0.21.2",
+    "xhr-request": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "react-test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "test": "mocha"
-  },
-  "eslintConfig": {
-    "extends": "./node_modules/react-scripts/config/eslint.js"
+    "css:build": "node-sass src/ -o src/",
+    "css:watch": "yarn run css:build && node-sass src/ -o src/ --watch --recursive",
+    "server:start": "yarn start",
+    "client:start": "react-scripts-ts start",
+    "start:dev": "npm-run-all -p css:watch server:start client:start",
+    "start": "node server",
+    "build": "npm run css:build && react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom"
   }
 }

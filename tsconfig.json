@@ -1,16 +1,33 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "outDir": "build/dist",
     "module": "commonjs",
-    "sourceMap": false,
-    "outDir": "src",
-    "types": ["node"],
-    "typeRoots": ["./node_modules/@types", "./types"],
-    "jsx": "react",
+    "target": "es5",
+    "lib": ["es6", "dom"],
+    "sourceMap": true,
     "allowJs": true,
-    "noImplicitUseStrict": true
+    "jsx": "react",
+    "moduleResolution": "node",
+    "rootDir": "src",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": false
   },
-  "include": [
-    "ts-src/**/*"
+  "exclude": [
+    "node_modules",
+    "build",
+    "scripts",
+    "acceptance-tests",
+    "webpack",
+    "jest",
+    "server",
+    "src/setupTests.ts"
+  ],
+  "types": [
+    "typePatches"
   ]
 }
