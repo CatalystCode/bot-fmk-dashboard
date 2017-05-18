@@ -41,12 +41,8 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
    * @param {function} callback
    */
   updateDependencies(dependencies: any) {
-    let emptyDependency = false;
-    Object.keys(this._props.dependencies).forEach((key) => {
-      if(typeof dependencies[key] === 'undefined') emptyDependency = true;
-    });
-
     // If one of the dependencies is not supplied, do not run the query
+    const emptyDependency :boolean = !!Object.keys(this._props.dependencies).find(key => typeof dependencies[key] === 'undefined');
     if (emptyDependency) {
       return (dispatch) => {
         return dispatch();
@@ -55,20 +51,15 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
 
     // Validate connection
     let connection = this.getConnection();
-    let { appId, apiKey } = connection;
-    if (!connection || !apiKey || !appId) {
+    if (!connection || !connection.apiKey || !connection.appId) {
       return (dispatch) => {
         return dispatch();
       };
     }
 
-    let { queryTimespan } = dependencies;
     let params = this._props.params;
     let tableNames: Array<string> = [];
     let mappings: Array<any> = [];
-    let queries: IDictionary = {};
-    let table: string = null;
-    let filters: Array<IFilterParams> = params.filters;
 
     // Checking if this is a single query or a fork query
     let query: string;
@@ -76,38 +67,34 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
 
     if (!isForked) {
       let queryKey = this._props.id;
-      query = this.query(params.query, dependencies, isForked, queryKey, filters);
+      query = this.query(params.query, dependencies, isForked, queryKey, params.filters);
       mappings.push(params.mappings);
     } else {
-      queries = params.queries || {};
-      table = params.table;
-      query = ` ${table} | fork `;
-
-      Object.keys(queries).forEach((key) => {
-        let queryParams = queries[key];
-        filters = queryParams.filters || [];
-        tableNames.push(key);
-        mappings.push(queryParams.mappings);
-        query += this.query(queryParams.query, dependencies, isForked, key, filters);
-        return true;
-      });
+      query = ` ${params.table} | fork `;
+      if (params.queries) {
+        Object.keys(params.queries).forEach((key) => {
+          let queryParams = params.queries[key];
+          tableNames.push(key);
+          mappings.push(queryParams.mappings);
+          query += this.query(queryParams.query, dependencies, isForked, key, queryParams.filters);
+        });
+      }
     }
 
-    var url = `${appInsightsUri}/${appId}/query?timespan=${queryTimespan}`;
+    var url = `${appInsightsUri}/${connection.appId}/query?timespan=${dependencies.queryTimespan}`;
 
     return (dispatch) => {
       request(url, {
         method: 'POST',
         json: true,
         headers: {
-          'x-api-key': apiKey
+          'x-api-key': connection.apiKey
         },
         body: {
           query
         }
       }, (error, json) => {
         if (error) {
-          console.log(error);
           return this.failure(error);
         }
 
@@ -132,7 +119,7 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
           // Get state for filter selection
           const prevState = DataSourceConnector.getDataSource(this._props.id).store.getState();
           // Extracting calculated values
-          let calc = queries[aTable].calculated;
+          let calc = params.queries[aTable].calculated;
           if (typeof calc === 'function') {
             var additionalValues = calc(returnedResults[aTable], dependencies, prevState) || {};
             Object.assign(returnedResults, additionalValues);
@@ -148,12 +135,11 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
     if (Array.isArray(selectedValues)) {
       return Object.assign(dependencies, { 'selectedValues': selectedValues });
     } else {
-      return Object.assign(dependencies, { ... selectedValues });
+      return Object.assign(dependencies, { ...selectedValues });
     }
   }
 
   private mapAllTables(results: IQueryResults, mappings: Array<IDictionary>): any[][] {
-
     if (!results || !results.Tables || !results.Tables.length) {
       return [];
     }
@@ -192,7 +178,7 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
     return typeof query === 'function' ? query(dependencies) : query;
   }
 
-  private query(query: any, dependencies: any, isForked: boolean, queryKey: string, filters: IFilterParams[]): string {
+  private query(query: any, dependencies: any, isForked: boolean, queryKey: string, filters: Array<IFilterParams> = []): string {
     let q = this.compileQuery(query, dependencies);
     // Don't filter a filter query, or no filters specified
     if (queryKey.startsWith('filter') || filters === undefined || filters.length === 0) {
