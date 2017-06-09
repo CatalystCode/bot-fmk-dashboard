@@ -1,0 +1,14 @@
+language:
+  node_js
+
+node_js:
+  - "7"
+
+install:
+  - yarn install
+
+env:
+  - NPM_COMMAND="lint"
+
+script:
+  - npm run $NPM_COMMAND
