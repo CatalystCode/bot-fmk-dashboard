@@ -1,4 +1,6 @@
 
+import { ToastActions } from '../../components/Toast';
+
 export interface IDataSourceOptions {
   dependencies: (string | Object)[];
   /** This would be variable storing the results */
@@ -116,6 +118,23 @@ export abstract class DataSourcePlugin<T> implements IDataSourcePlugin {
   }
 
   failure(error: any): void { 
+    ToastActions.addToast({ text: this.errorToMessage(error) });
     return error;
+  }
+
+  private errorToMessage(error: any): string {
+    if (!(error instanceof Error)) {
+
+      if (typeof error === 'object') { return JSON.stringify(error); }
+
+      return error;
+    }
+
+    const message = (error as Error).message;
+    if (message === '[object ProgressEvent]') {
+      return 'There is a problem connecting to the internet.';
+    }
+
+    return `Error: ${message}`;
   }
 }

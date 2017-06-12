@@ -4,6 +4,7 @@ export default class Help extends React.Component<any, any> {
 
   render() {
 
+    // tslint:disable:max-line-length
     return (
       <div>
         <h2>Background</h2>
@@ -29,5 +30,6 @@ export default class Help extends React.Component<any, any> {
         </p>
       </div>
     );
+    // tslint:enable:max-line-length
   }
 }

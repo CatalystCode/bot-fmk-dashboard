@@ -6,9 +6,6 @@
 # testing
 /coverage
 
-# production
-/build
-
 # misc
 .DS_Store
 .env
@@ -17,7 +14,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # generated files
-*.css
+src/**/*.css
 
 # generated merge temp files
 *.orig

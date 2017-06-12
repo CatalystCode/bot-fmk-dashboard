@@ -1,4 +1,4 @@
-# Bot Framedash
+# Ibex Dashboard
 This is an application insights based project that displays a bots analytics dashboard.
 
 # Preview
@@ -39,7 +39,7 @@ The following steps explain how to connect **Application Insights** bot with you
 
 # Resources
 
-### Used Repos Technologies
+### Technologies In Use
 
 * http://recharts.org/
 * http://www.material-ui.com/
@@ -67,14 +67,12 @@ Thinking about integrating with:
 ```bash
 git clone https://github.com/CatalystCode/ibex-dashboard.git
 cd ibex-dashboard
-npm install -g create-react-app
-npm install -g yarn
-yarn install
+npm install
 ```
 
 ### Dev
 ```bash
-yarn run start:dev
+npm run start:dev
 ```
 
 ### Test Watcher

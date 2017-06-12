@@ -5,9 +5,6 @@ import { Card, CardTitle, CardActions, CardText } from 'react-md/lib/Cards';
 import Media, { MediaOverlay } from 'react-md/lib/Media';
 import Dialog from 'react-md/lib/Dialogs';
 import TextField from 'react-md/lib/TextFields';
-import { Link } from 'react-router';
-
-import InfoDrawer from '../common/InfoDrawer';
 
 import SetupActions from '../../actions/SetupActions';
 import SetupStore from '../../stores/SetupStore';
@@ -15,12 +12,36 @@ import SetupStore from '../../stores/SetupStore';
 import ConfigurationActions from '../../actions/ConfigurationsActions';
 import ConfigurationStore from '../../stores/ConfigurationsStore';
 
+const renderHTML = require('react-render-html');
+
+const styles = {
+  card: {
+    minWidth: 400,
+    height: 200,
+    marginTop: 50,
+  },
+  image: {
+    filter: 'opacity(30%) grayscale(70%)'
+  },
+  fabs: {
+    position: 'absolute',
+    bottom: '50px',
+    right: '10px',
+    zIndex: 1,
+  },
+  primaryFab: {
+    marginLeft: '2px'
+  }
+};
+
 interface IHomeState extends ISetupConfig {
   loaded?: boolean;
   templates?: IDashboardConfig[];
   selectedTemplateId?: string;
   template?: IDashboardConfig;
   creationState?: string;
+  infoVisible?: boolean;
+  infoHtml?: string;
 }
 
 export default class Home extends React.Component<any, IHomeState> {
@@ -33,13 +54,21 @@ export default class Home extends React.Component<any, IHomeState> {
     redirectUrl: '',
     clientID: '',
     clientSecret: '',
+    issuer: '',
     loaded: false,
 
     templates: [],
     selectedTemplateId: null,
     template: null,
-    creationState: null  
+    creationState: null,
+
+    infoVisible: false,
+    infoHtml: '',
   };
+
+  private _fieldId;
+  private _fieldName;
+  private _fieldIcon;
 
   constructor(props: any) {
     super(props);
@@ -48,44 +77,51 @@ export default class Home extends React.Component<any, IHomeState> {
     this.onNewTemplateCancel = this.onNewTemplateCancel.bind(this);
     this.onNewTemplateSave = this.onNewTemplateSave.bind(this);
 
-    // Setting the state from the configuration store
-    let state = ConfigurationStore.getState() || {} as any;
-    let { templates, template, creationState } = state;
-    this.state.templates = templates || [];
-    this.state.template = template;
-    this.state.creationState = creationState;
+    this.onOpenInfo = this.onOpenInfo.bind(this);
+    this.onCloseInfo = this.onCloseInfo.bind(this);
+    this.updateSetup = this.updateSetup.bind(this);
+    this.updateConfiguration = this.updateConfiguration.bind(this);
+  }
 
-    ConfigurationStore.listen(state => {
-      this.setState({ 
-        templates: state.templates || [] ,
-        template: state.template,
-        creationState: state.creationState
-      })
-    })
+  updateConfiguration(state: {templates: IDashboardConfig[], template: IDashboardConfig, creationState: string}) {
+    this.setState({
+      templates: state.templates || [],
+      template: state.template,
+      creationState: state.creationState
+    });
+  }
+
+  updateSetup(state: IHomeState) {
+    this.setState(state);
+
+    // Setup hasn't been configured yet
+    if (state.stage === 'none') {
+      window.location.replace('/setup');
+    }
   }
 
   componentDidMount() {
 
     this.setState(SetupStore.getState());
+    this.updateConfiguration(ConfigurationStore.getState());
 
     SetupActions.load();
-    SetupStore.listen(state => {
-      this.setState(state);
-      
-      // Setup hasn't been configured yet
-      if (state.stage === 'none') {
-        window.location.replace('/setup');
-      }
-    });
+    SetupStore.listen(this.updateSetup);
+    ConfigurationStore.listen(this.updateConfiguration);
+  }
+
+  componentWillUnmount() {
+    SetupStore.unlisten(this.updateSetup);
+    ConfigurationStore.unlisten(this.updateConfiguration);
   }
 
   componentDidUpdate() {
     if (this.state.creationState === 'successful') {
-      window.location.replace('/dashboard/' + (this.refs.id as any).getField().value)
+      window.location.replace('/dashboard/' + this._fieldId.getField().value);
     }
   }
 
-  onNewTemplateSelected(templateId) {
+  onNewTemplateSelected(templateId: string) {
     this.setState({ selectedTemplateId: templateId });
     ConfigurationActions.loadTemplate(templateId);
   }
@@ -94,22 +130,24 @@ export default class Home extends React.Component<any, IHomeState> {
     this.setState({ selectedTemplateId: null });
   }
 
-  deepObjectExtend (target: any, source: any) {
-    for (var prop in source)
-      if (prop in target)
+  deepObjectExtend(target: any, source: any) {
+    for (var prop in source) {
+      if (prop in target) {
         this.deepObjectExtend(target[prop], source[prop]);
-      else
+      } else {
         target[prop] = source[prop];
+      }
+    }
     return target;
   }
 
   onNewTemplateSave() {
 
     let createParams = {
-      id: (this.refs.id as any).getField().value,
-      name: (this.refs.name as any).getField().value,
-      icon: (this.refs.icon as any).getField().value,
-      url: (this.refs.id as any).getField().value
+      id: this._fieldId.getField().value,
+      name: this._fieldName.getField().value,
+      icon: this._fieldIcon.getField().value,
+      url: this._fieldId.getField().value
     };
 
     var dashboard: IDashboardConfig = this.deepObjectExtend({}, this.state.template);
@@ -121,9 +159,17 @@ export default class Home extends React.Component<any, IHomeState> {
     ConfigurationActions.createDashboard(dashboard);
   }
 
-  render() {
+  onOpenInfo(html: string) {
+    this.setState({ infoVisible: true, infoHtml: html });
+  }
 
+  onCloseInfo() {
+    this.setState({ infoVisible: false });
+  }
+
+  render() {
     let { loaded, redirectUrl, templates, selectedTemplateId, template } = this.state;
+    let { infoVisible, infoHtml } = this.state;
 
     if (!redirectUrl) {
       redirectUrl = window.location.protocol + '//' + window.location.host + '/auth/openid/return';
@@ -133,24 +179,50 @@ export default class Home extends React.Component<any, IHomeState> {
       return <CircularProgress key="progress" id="contentLoadingProgress" />;
     }
 
-    let templateCards = templates.map((template, index) => (
-      <div style={{ maxWidth: 450, maxHeight: 216, margin: 10 }} className="md-cell--6" key={index}>
-        <Card style={{ marginTop: 40 }}>
+    if (!templates) {
+      return null;
+    }
+
+    let templateCards = templates.map((temp, index) => (
+      <div key={index} className="md-cell" style={styles.card}>
+        <Card className="md-block-centered" key={index} >
           <Media>
-            <img src={template.preview} role="presentation" style={{ filter: 'opacity(30%)' }}/>
+            <img src={temp.preview} role="presentation" style={styles.image} />
             <MediaOverlay>
-              <CardTitle title={template.name} subtitle={template.description} wrapperStyle={{ whiteSpace: 'wrap' }}>
-                <Button onClick={this.onNewTemplateSelected.bind(this, template.id)} className="md-cell--right" icon>add_circle_outline</Button>
-              </CardTitle>
+              <CardTitle title={temp.name} subtitle={temp.description} />
             </MediaOverlay>
           </Media>
+          <CardActions style={styles.fabs}>
+            <Button floating secondary onClick={this.onOpenInfo.bind(this, temp.html || '<p>No info available</p>')}>
+              info
+            </Button>
+            <Button floating primary onClick={this.onNewTemplateSelected.bind(this, temp.id)} style={styles.primaryFab}>
+              add_circle_outline
+            </Button>
+          </CardActions>
         </Card>
       </div>
-    ))
+    ));
 
     return (
-      <div style={{ width: '100%' }} className="md-grid">
-        {templateCards}
+      <div>
+        <div className="md-grid">
+          {templateCards}
+        </div>
+
+        <Dialog
+          id="templateInfoDialog"
+          visible={infoVisible}
+          onHide={this.onCloseInfo}
+          dialogStyle={{ width: '80%' }}
+          contentStyle={{ padding: '0', maxHeight: 'calc(100vh - 148px)' }}
+          aria-label="Info"
+          focusOnMount={false}
+        >
+          <div className="md-grid">
+            {renderHTML(infoHtml)}
+          </div>
+        </Dialog>
 
         <Dialog
           id="configNewDashboard"
@@ -160,13 +232,13 @@ export default class Home extends React.Component<any, IHomeState> {
           dialogStyle={{ width: '50%' }}
           modal
           actions={[
-            { onClick: this.onNewTemplateSave, primary: false, label: 'Create', },
-            { onClick: this.onNewTemplateCancel, primary: true, label: 'Cancel' }
+            { onClick: this.onNewTemplateCancel, primary: false, label: 'Cancel' },
+            { onClick: this.onNewTemplateSave, primary: true, label: 'Create', },
           ]}
         >
           <TextField
             id="id"
-            ref="id"
+            ref={field => this._fieldId = field}
             label="Dashboard Id"
             defaultValue={template && template.id || ''}
             lineDirection="center"
@@ -174,7 +246,7 @@ export default class Home extends React.Component<any, IHomeState> {
           />
           <TextField
             id="name"
-            ref="name"
+            ref={field => this._fieldName = field}
             label="Dashboard Name"
             defaultValue={template && template.name || ''}
             lineDirection="center"
@@ -182,7 +254,7 @@ export default class Home extends React.Component<any, IHomeState> {
           />
           <TextField
             id="icon"
-            ref="icon"
+            ref={field => this._fieldIcon = field}
             label="Dashboard Icon"
             defaultValue={template && template.icon || 'dashboard'}
             lineDirection="center"

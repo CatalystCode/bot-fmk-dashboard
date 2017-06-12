@@ -23,9 +23,9 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
         let dashboards: IDashboardConfig[] = (window as any)['dashboardDefinitions'];
         let templates: IDashboardConfig[] = (window as any)['dashboardTemplates'];
 
-        // if (!dashboards || !dashboards.length) {
-        //   return this.failure(new Error('Could not load configuration'));
-        // }
+        if ((!dashboards || !dashboards.length) && (!templates || !templates.length)) {
+          return this.failure(new Error('Could not load configuration'));
+        }
 
         return dispatcher({ dashboards, templates });
       });
@@ -57,7 +57,7 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
           json: true,
           body: { script: 'return ' + script }
         }, 
-        (error: any, json: any) => {
+              (error: any, json: any) => {
 
           if (error || (json && json.errors)) {
             return this.failure(error || json.errors);
@@ -95,11 +95,14 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
           json: true,
           body: { script: 'return ' + stringDashboard }
         }, 
-        (error: any, json: any) => {
+              (error: any, json: any) => {
 
           if (error) {
             return this.failure(error);
           }
+
+          // Request a reload of the configuration
+          this.loadDashboard(dashboard.id);
 
           return dispatcher(json);
         }
@@ -111,11 +114,16 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
     return { error };
   }
 
-  private getScript(source: string, callback?: () => void): void {
+  private getScript(source: string, callback?: () => void): boolean {
     let script: any = document.createElement('script');
     let prior = document.getElementsByTagName('script')[0];
     script.async = 1;
-    prior.parentNode.insertBefore(script, prior);
+
+    if (prior) {
+      prior.parentNode.insertBefore(script, prior);
+    } else {
+      document.getElementsByTagName('body')[0].appendChild(script);
+    }
 
     script.onload = script.onreadystatechange = (_, isAbort) => {
       if (isAbort || !script.readyState || /loaded|complete/.test(script.readyState) ) {
@@ -127,6 +135,7 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
     };
 
     script.src = source;
+    return true;
   }
 
   /**
@@ -135,34 +144,49 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
    */
   private objectToString(obj: Object, indent: number = 0, lf: boolean = false): string {
     
-    let result = ''; //(lf ? '\n' : '') + '\t'.repeat(indent);
+    let result = ''; // (lf ? '\n' : '') + '\t'.repeat(indent);
     let sind = '\t'.repeat(indent);
     let objectType = (Array.isArray(obj) && 'array') || typeof obj;
     
     switch (objectType) {
       case 'object': {
 
+        if (obj === null) { return result = 'null'; }
+
         // Iterating through all values in object
         let objectValue = '';
+        let objectValues = [];
+        let valuesStringLength = 0;
         Object.keys(obj).forEach((key: string, idx: number) => {
-
-          if (idx > 0) { objectValue += ',\n'; }
 
           let value = this.objectToString(obj[key], indent + 1, true);
 
           // if key contains '.' or '-'
           let skey = key.search(/\.|\-/g) >= 0 ? `"${key}"` : `${key}`;
+          let mapping = `${skey}: ${value}`;
+          valuesStringLength += mapping.length;
 
-          objectValue += `${sind}\t${skey}: ${value}`;
+          objectValues.push(mapping);
         });
 
-        result += `{\n${objectValue}\n${sind}}`;
+        if (valuesStringLength <= 120) {
+          result += `{ ${objectValues.join()} }`;
+        } else {
+          result += `{\n${sind}\t${objectValues.join(',\n' + sind + '\t')}\n${sind}}`;          
+        }
+
         break;
       }
 
       case 'string':
-        let stringValue = obj.toString().replace(/\"/g, '\\"');
-        result += `"${stringValue}"`;
+        let stringValue = obj.toString();
+        let htmlString = stringValue.replace(/^\s+|\s+$/g, ''); // trim any leading and trailing whitespace
+        if ( htmlString.startsWith('<') && htmlString.endsWith('>') ) {
+          result += '`' + htmlString + '`'; // html needs to be wrapped in back ticks
+        } else {
+          stringValue = stringValue.replace(/\"/g, '\\"');
+          result += `"${stringValue}"`;
+        }
         break;
 
       case 'function': {
@@ -177,13 +201,19 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
       }
 
       case 'array': {
-        let arrayValue = '';
-        (obj as any[]).forEach((value: any, idx: number) => {
-          arrayValue += idx > 0 ? ',' : '';
-          arrayValue += this.objectToString(value, indent + 1, true);
+        let arrayStringLength = 0;
+        let mappedValues = (obj as any[]).map(value => {
+          let res = this.objectToString(value, indent + 1, true);
+          arrayStringLength += res.length;
+          return res;
         });
+
+        if (arrayStringLength <= 120) {
+          result += `[${mappedValues.join()}]`;
+        } else {
+          result += `[\n${sind}\t${mappedValues.join(',\n' + sind + '\t')}\n${sind}]`;          
+        }
         
-        result += `[${arrayValue}]`;
         break;
       }
 
@@ -240,7 +270,7 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
         calculated = calculated.substr('function(){return'.length, calculated.length - 'function(){return'.length - 1);
         eval('dataSource.calculated = ' + calculated); /* tslint:disable-line */
       }
-    })
+    });
   }
 }
 

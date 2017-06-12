@@ -8,7 +8,7 @@ interface ISpinnerActions {
 }
 
 class SpinnerActions extends AbstractActions /*implements ISpinnerActions*/ {
-  constructor(alt:AltJS.Alt) {
+  constructor(alt: AltJS.Alt) {
     super(alt);
 
     this.generateActions(

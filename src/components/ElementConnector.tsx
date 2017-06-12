@@ -12,24 +12,33 @@ export default class ElementConnector {
     var layouts = {};
     _.each(dashboard.config.layout.cols, (totalColumns, key) => {
 
+      let layoutIDs = {};
       var curCol = 0;
       var curRowOffset = 0;
       var maxRowHeight = 0;
 
       // Go over all elements in the dashboard and check their size
+      layouts[key] = [];
+
       elementsContainer.elements.forEach(element => {
-        var { id, size } = element;
+        let { id, size, location } = element;
+
+        if (layoutIDs[id]) { return; }
+        layoutIDs[id] = true;
 
         if (curCol > 0 && (curCol + size.w) > totalColumns) {
           curCol = 0;
           curRowOffset = maxRowHeight;
         }
 
-        layouts[key] = layouts[key] || [];
+        location = location || { x: -1, y: -1 };
+        if (location.x !== 0 && location.x < 0) { location.x = curCol; }
+        if (location.y !== 0 && location.y < 0) { location.y = curRowOffset; }
+
         layouts[key].push({
           'i': id,
-          'x': curCol,
-          'y': curRowOffset,
+          'x': location.x,
+          'y': location.y,
           'w': size.w,
           'h': size.h
         });
@@ -49,7 +58,7 @@ export default class ElementConnector {
 
     dashboard.elements.forEach((element, idx) => {
       var ReactElement = plugins[element.type];
-      var { id, dependencies, actions, props, title, subtitle, size, theme } = element;
+      var { id, dependencies, actions, props, title, subtitle, size, theme, location } = element;
       var layoutProps = _.find(layout, { 'i': id });
 
       if (dependencies && dependencies.visible && !visibilityFlags[dependencies.visible]) { 

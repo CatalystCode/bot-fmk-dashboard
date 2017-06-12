@@ -8,8 +8,18 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const authRouter = require('./routes/auth');
 const apiRouter = require('./routes/api');
+const graphQLRouter = require('./routes/graphql');
+const cosmosDBRouter = require('./routes/cosmos-db');
+const azureRouter = require('./routes/azure');
 
 const app = express();
+
+
+app.use((req, res, next) => {
+  console.log(`Request URL: ${req.url}`);
+  return next();
+});
+
 app.use(cookieParser());
 app.use(expressSession({ secret: 'keyboard cat', resave: true, saveUninitialized: false }));
 app.use(bodyParser.json());
@@ -21,6 +31,9 @@ app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:htt
 app.use(authRouter.authenticationMiddleware('/auth', '/api/setup'));
 app.use('/auth', authRouter.router);
 app.use('/api', apiRouter.router);
+app.use('/cosmosdb', cosmosDBRouter.router);
+app.use('/azure', azureRouter.router);
+app.use('/graphql', graphQLRouter.router)
 
 app.use(express.static(path.resolve(__dirname, '..', 'build')));
 

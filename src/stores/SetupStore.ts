@@ -5,7 +5,7 @@ import connections from '../data-sources/connections';
 import { DataSourceConnector, IDataSourceDictionary } from '../data-sources';
 import SetupActions from '../actions/SetupActions';
 
-interface ISetupStoreState extends ISetupConfig {
+export interface ISetupStoreState extends ISetupConfig {
   loaded: boolean;
   saveSuccess: boolean;
 }
@@ -19,6 +19,7 @@ class SetupStore extends AbstractStoreModel<ISetupStoreState> implements ISetupS
   redirectUrl: string;
   clientID: string;
   clientSecret: string;
+  issuer: string;
   loaded: boolean;
   saveSuccess: boolean;
 
@@ -34,6 +35,7 @@ class SetupStore extends AbstractStoreModel<ISetupStoreState> implements ISetupS
     this.clientSecret = '';
     this.loaded = false;
     this.saveSuccess = false;
+    this.issuer = '';
 
     this.bindListeners({
       load: SetupActions.load
@@ -41,19 +43,22 @@ class SetupStore extends AbstractStoreModel<ISetupStoreState> implements ISetupS
   }
   
   load(setupConfig: ISetupConfig) {
-    this.admins = setupConfig.admins;
-    this.stage = setupConfig.stage;
-    this.enableAuthentication = setupConfig.enableAuthentication;
-    this.allowHttp = setupConfig.allowHttp;
-    this.redirectUrl = setupConfig.redirectUrl;
-    this.clientID = setupConfig.clientID;
-    this.clientSecret = setupConfig.clientSecret;
+
+    if (setupConfig) {
+      this.admins = setupConfig.admins;
+      this.stage = setupConfig.stage;
+      this.enableAuthentication = setupConfig.enableAuthentication;
+      this.allowHttp = setupConfig.allowHttp;
+      this.redirectUrl = setupConfig.redirectUrl;
+      this.clientID = setupConfig.clientID;
+      this.clientSecret = setupConfig.clientSecret;
+      this.issuer = setupConfig.issuer;
+    }
+    
     this.loaded = true;
     this.saveSuccess = true;
 
-    setTimeout(() => {
-      this.saveSuccess = false;
-    }, 500);
+    setTimeout(() => { this.saveSuccess = false; }, 500);
   }
 }
 

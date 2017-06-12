@@ -14,26 +14,26 @@ import './generic.css';
 const styles = {
   button: {
     userSelect: 'none',
-  },
+  } as React.CSSProperties,
   container: {
     position: 'relative',
     float: 'left',
     zIndex: 17,
-  },
+  } as React.CSSProperties,
   animateOpen: {
     transition: '.3s',
     transform: 'scale(1.0,1.0)',
     transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-  },
+  } as React.CSSProperties,
   animateClose: {
     transform: 'scale(1.0,0)',
     transition: '0s',
-  },
+  } as React.CSSProperties,
   list: {
     position: 'absolute',
     top: '0px',
     left: '0px',
-  }
+  } as React.CSSProperties
 };
 
 // using styles from the select field menu

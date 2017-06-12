@@ -3,9 +3,9 @@ import alt, { AbstractStoreModel } from '../../../alt';
 import dialogsActions from './DialogsActions';
 
 interface IDialogsStoreState {
-  dialogsStack: { dialogName: string, args: any }[],
-  dialogId: string,
-  dialogArgs: any
+  dialogsStack: { dialogName: string, args: any }[];
+  dialogId: string;
+  dialogArgs: any;
 }
 
 class DialogsStore extends AbstractStoreModel<IDialogsStoreState> implements IDialogsStoreState {
@@ -43,6 +43,6 @@ class DialogsStore extends AbstractStoreModel<IDialogsStoreState> implements IDi
   }
 }
 
-const dialogsStore = alt.createStore<IDialogsStoreState>(DialogsStore, "DialogsStore");
+const dialogsStore = alt.createStore<IDialogsStoreState>(DialogsStore, 'DialogsStore');
 
 export default dialogsStore;

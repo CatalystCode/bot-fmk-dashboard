@@ -17,9 +17,7 @@ class SetupActions extends AbstractActions implements ISetupActions {
     
     return (dispatcher: (setupConfig: ISetupConfig) => void) => {
       
-      request('/api/setup', { json: true },
-        (error: any, setupConfig: ISetupConfig) => {
-          
+      request('/api/setup', { json: true }, (setupError: any, setupConfig: ISetupConfig) => {
           return dispatcher(setupConfig);
         });
     };
@@ -36,20 +34,20 @@ class SetupActions extends AbstractActions implements ISetupActions {
           json: true,
           body: { json: stringConfig }
         }, 
-        (error: any, json: any) => {
+              (setupError: any, setupJson: any) => {
 
-          if (error) {
-            return this.failure(error);
+          if (setupError) {
+            return this.failure(setupError);
           }
 
           return request('/auth/init', 
-            (error: any, json: any) => {
+                         (authError: any, authJson: any) => {
 
-              if (error) {
-                return this.failure(error);
+              if (authError) {
+                return this.failure(authError);
               }
 
-              let toast : IToast = { text: 'Setup was saved successfully.' };
+              let toast: IToast = { text: 'Setup was saved successfully.' };
               ToastActions.addToast(toast);
 
               try {
@@ -58,7 +56,7 @@ class SetupActions extends AbstractActions implements ISetupActions {
                 }
               } catch (e) { }
 
-              return dispatcher(json);
+              return dispatcher(authJson);
             }
           );
         }

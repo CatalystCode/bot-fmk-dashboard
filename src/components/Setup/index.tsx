@@ -6,11 +6,13 @@ import Button from 'react-md/lib/Buttons/Button';
 import Switch from 'react-md/lib/SelectionControls/Switch';
 
 import InfoDrawer from '../common/InfoDrawer';
+import { ToastActions } from '../Toast';
 
 import SetupActions from '../../actions/SetupActions';
-import SetupStore from '../../stores/SetupStore';
+import SetupStore, { ISetupStoreState } from '../../stores/SetupStore';
 
 interface ISetupState extends ISetupConfig {
+  editedEmail?: string;
   validEmail?: boolean;
   loaded?: boolean;
 }
@@ -21,75 +23,156 @@ export default class Setup extends React.Component<any, ISetupState> {
     admins: null,
     stage: 'none',
     enableAuthentication: false,
+    editedEmail: '',
     validEmail: true,
     allowHttp: false,
     redirectUrl: '',
     clientID: '',
     clientSecret: '',
-    loaded: false
+    loaded: false,
+    issuer: ''
   };
 
   constructor(props: any) {
     super(props);
 
-    this.checkKeyValue = this.checkKeyValue.bind(this);
+    this.updateSetupState = this.updateSetupState.bind(this);
+    this.checkEmailValue = this.checkEmailValue.bind(this);
     this.onSave = this.onSave.bind(this);
     this.onCancel = this.onCancel.bind(this);
     this.onRemoveAdmin = this.onRemoveAdmin.bind(this);
+    this.onSwitchAllowHttp = this.onSwitchAllowHttp.bind(this);
     this.onSwitchAuthenticationEnables = this.onSwitchAuthenticationEnables.bind(this);
     this.onFieldChange = this.onFieldChange.bind(this);
+    this.getAdminArray = this.getAdminArray.bind(this);
+    this.addAdminEmail = this.addAdminEmail.bind(this);
+    this.onAddAdminClick = this.onAddAdminClick.bind(this);
+    this.addAdminEmailChange = this.addAdminEmailChange.bind(this);
+    this.redirectOut = this.redirectOut.bind(this);
+    this.areDefaultValues = this.areDefaultValues.bind(this);
+  }
+
+  updateSetupState(state: ISetupStoreState) {
+    this.setState(state);
   }
 
   componentDidMount() {
 
-    this.setState(SetupStore.getState());
+    this.updateSetupState(SetupStore.getState());
 
     SetupActions.load();
-    SetupStore.listen(state => {
-      this.setState(state);
-    });
+    SetupStore.listen(this.updateSetupState);
+  }
+
+  componentWillUnmount() {
+    SetupStore.unlisten(this.updateSetupState);
   }
 
   validateEmail(email: string): boolean {
+    // tslint:disable-next-line:max-line-length
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
   }
 
-  checkKeyValue(e: any) {
+  checkEmailValue(e: any) {
     if (e.key === 'Enter') {
-
-      let email = e.target.value;
-      if (this.validateEmail(email)) {
-        var admins = this.state.admins;
-        admins.push(email);
-        this.setState({ admins });
-        e.target.value = '';
-      } else {
-        this.setState({ validEmail: false })
-      }
+      this.addAdminEmail();
       return false;
     }
-
     this.setState({ validEmail: true });
     return true;
   }
 
-  onSave () {
-    SetupActions.save({
-      admins: this.state.admins,
+  onAddAdminClick() {
+    this.addAdminEmail();
+  }
+
+  addAdminEmailChange(newValue: any) {
+    this.setState({ editedEmail: newValue });
+  }
+
+  addAdminEmail() {
+    let email = this.state.editedEmail;
+    if (this.validateEmail(email)) {
+      var admins = this.state.admins;
+      admins.push(email);
+      this.setState({ admins, editedEmail: '' });
+    } else {
+      this.setState({ validEmail: false });
+    }
+  }
+
+  fixRedirectUrl(redirectUrl: string): string {
+    if (redirectUrl) { return redirectUrl; }
+
+    let host = window.location.host;
+
+    // On localhost, authentication requests go directly to port 4000
+    if (host === 'localhost:3000') { host = 'localhost:4000'; }
+
+    return window.location.protocol + '//' + host + '/auth/openid/return';
+  }
+
+  getAdminArray(): string[] {
+    let admins = this.state.admins || [];
+    if (this.state.editedEmail) {
+      admins.push(this.state.editedEmail);
+    }
+    return admins;
+  }
+
+  onSave(): any {
+
+    let admins = this.getAdminArray();
+    let redirectUrl = this.fixRedirectUrl(this.state.redirectUrl);
+
+    if (this.state.enableAuthentication) {
+      if (!admins || !admins.length) { 
+        return ToastActions.addToast({ text: 'Fill in at least one admin', action: null }); 
+      }
+      if (!redirectUrl) { 
+        return ToastActions.addToast({ text: 'Fill in redirect url', action: null }); 
+      }
+      if (!this.state.issuer) { 
+        return ToastActions.addToast({ text: 'Fill in issuer', action: null }); 
+      }
+      if (this.state.issuer.indexOf('{Tenant-ID}') !== -1) { 
+        return ToastActions.addToast({ text: 'Fill in a real issuer/tenant', action: null }); 
+      }
+      if (!this.state.clientID) { 
+        return ToastActions.addToast({ text: 'Fill in client ID', action: null }); 
+      }
+      if (!this.state.clientSecret) { 
+        return ToastActions.addToast({ text: 'Fill in client secret', action: null }); 
+      }
+      if (!this.state.allowHttp && redirectUrl.startsWith('http:')) { 
+        return ToastActions.addToast(
+          { 
+            text: 'Redirect url should start with https or enable http redirects', 
+            action: null 
+          }); 
+      }
+    }
+  
+    var setupConfig = {
+      admins: admins,
       stage: this.state.stage,
       enableAuthentication: this.state.enableAuthentication,
       allowHttp: this.state.allowHttp,
-      redirectUrl: this.state.redirectUrl,
+      redirectUrl: redirectUrl,
       clientID: this.state.clientID,
-      clientSecret: this.state.clientSecret
-    }, () => {
-      window.location.replace('/');
-    });
+      clientSecret: this.state.clientSecret,
+      issuer: this.state.issuer
+    };
+    SetupActions.save(setupConfig, () => { this.redirectOut(); });
   }
 
   onCancel () {
-    SetupActions.load();
+    this.redirectOut(); 
+  }
+
+  redirectOut() {
+    window.location.replace('/'); 
   }
 
   onRemoveAdmin(admin: string) {
@@ -102,27 +185,42 @@ export default class Setup extends React.Component<any, ISetupState> {
     }
   }
 
-  onSwitchAuthenticationEnables (checked) {
+  onSwitchAuthenticationEnables(checked: boolean) {
     this.setState({ enableAuthentication: checked });
   };
 
-  onSwitchAllowHttp (checked) {
+  onSwitchAllowHttp(checked: boolean) {
     this.setState({ allowHttp: checked });
   };
 
-  onFieldChange (value: string, e: any) {
+  onFieldChange(value: string, e: any) {
     let state = {};
     state[e.target.id] = value;
     this.setState(state);
   }
 
+  // is it an empty configuration file?
+  areDefaultValues() {
+    return (
+      (this.state.admins == null || this.state.admins.length === 0)
+      && !this.state.allowHttp
+      && !this.state.clientID
+      && !this.state.clientSecret
+      && !this.state.enableAuthentication
+      && !this.state.issuer
+    );
+  }
+
   render() {
 
-    let { admins, loaded, validEmail, enableAuthentication, redirectUrl, clientID, clientSecret } = this.state;
-
-    if (!redirectUrl) {
-      redirectUrl = window.location.protocol + '//' + window.location.host + '/auth/openid/return';
+    let { admins, loaded, validEmail, enableAuthentication, 
+      redirectUrl, clientID, clientSecret, issuer, editedEmail } = this.state;
+    if (!issuer) {
+      issuer = 'https://sts.windows.net/{Tenant-ID}/';
     }
+
+    // Setting default redirect parameter
+    redirectUrl = this.fixRedirectUrl(redirectUrl);
 
     if (!loaded) {
       return null;
@@ -135,13 +233,16 @@ export default class Setup extends React.Component<any, ISetupState> {
         avatar={<Avatar random>{admin.length && admin[0] || '?'}</Avatar>}
         removable
         onClick={this.onRemoveAdmin.bind(this, admin)}
+      
       />
     ));
 
+    // tslint:disable:max-line-length
     return (
       <div style={{ width: '100%' }}>
         <Switch
           id="enableAuthentication" 
+          name="enableAuthentication"
           label="Enable Authentication"
           checked={enableAuthentication}
           onChange={this.onSwitchAuthenticationEnables}
@@ -149,16 +250,22 @@ export default class Setup extends React.Component<any, ISetupState> {
         />
         <InfoDrawer 
           width={300} 
-          title='Authentication'
-          buttonIcon='help'
-          buttonTooltip='Click here to learn more about authentications'
+          title="Authentication"
+          buttonIcon="help"
+          buttonTooltip="Click here to learn more about authentications"
+          buttonLabel="instructions"
         >
           <div>
             Follow the instructions
-            in <a href='https://auth0.com/docs/connections/enterprise/azure-active-directory' target='_blank'>this link</a> to
-            get <b>Client ID</b> and <b>Client Secret</b>
+            in <a href="https://auth0.com/docs/connections/enterprise/azure-active-directory" target="_blank">this link</a> to
+            get <b>Client ID (Application ID)</b> and <b>Client Secret</b> (This process will require you to create a new application, add permissions, configure reply URL).
+            <br />
+            The <b>Redirect Url</b> corresponds to the Reply URL.
+            <br/>
+            The <b>TenantID</b> is the 'Directory ID' token found in: Azure Portal > Active Directory > Properties.
+
             <hr/>
-            Once you set up authentication, the first user you will log in with, will become the administrator.
+            Please add an administrator email and press the 'Add' button.
             <hr/>
             This page (/setup) will continue to be available without authentication as long as you don't set up admin users.
           </div>
@@ -166,27 +273,36 @@ export default class Setup extends React.Component<any, ISetupState> {
 
         <br />
         {
-          enableAuthentication && 
+          enableAuthentication && (
             <div>
               <Switch
                 id="allowHttp" 
-                label="Allow http in authentication responses"
+                name="allowHttp"
+                label="Allow http in authentication responses, e.g. during local development."
                 checked={this.state.allowHttp}
                 onChange={this.onSwitchAllowHttp}
               />
               <div className="chip-list">
                 {adminChips}
               </div>
-              <TextField 
-                id="adminEmail"
-                label="Administrator Email"
-                error={!validEmail}
-                errorText={!validEmail && 'Please enter a valid email address'}
-                lineDirection="center"
-                placeholder="Enter an additional administrator email"
-                className="md-cell md-cell--bottom"
-                onKeyDown={this.checkKeyValue}
-              />
+              <div className="md-grid md-cell md-cell--bottom" style={{margin: 0, padding: 0}}>
+                <TextField
+                  id="adminEmail"
+                  label="Administrator Email"
+                  error={!validEmail}
+                  errorText={(!validEmail && 'Please enter a valid email address') || ''}
+                  lineDirection="center"
+                  placeholder="Enter an additional administrator email"
+                  className="md-cell md-cell--bottom md-cell--4"
+                  value={editedEmail}
+                  onKeyDown={this.checkEmailValue}
+                  onChange={this.addAdminEmailChange}
+                />
+                <span  className="md-cell md-cell--bottom">
+                  <Button  icon primary onClick={this.onAddAdminClick}>add_circle</Button>
+                </span>
+              </div>
+              
               <TextField 
                 id="redirectUrl"
                 label="Redirect Url"
@@ -215,11 +331,25 @@ export default class Setup extends React.Component<any, ISetupState> {
                 defaultValue={clientSecret}
                 onChange={this.onFieldChange}
               />
-            </div>
+              <TextField 
+                id="issuer"
+                label="Issuer: https://sts.windows.net/{Tenant-ID}/"
+                lineDirection="center"
+                placeholder="https://sts.windows.net/{Tenant-ID}/"
+                className="md-cell md-cell--bottom"
+                defaultValue={issuer}
+                onChange={this.onFieldChange}
+              />
+            </div>)
         }
-        <Button flat primary label="Save &amp; Apply" onClick={this.onSave}>save</Button>
-        <Button flat primary label="Cancel" onClick={this.onCancel}>undo</Button>
+        <Button flat primary label="Apply" onClick={this.onSave}>save</Button>
+        { 
+          !this.areDefaultValues() && (
+            <Button flat primary label="Cancel" onClick={this.onCancel}>undo</Button>
+          )
+        }
       </div>
     );
+    // tslint:enable:max-line-length
   }
 }

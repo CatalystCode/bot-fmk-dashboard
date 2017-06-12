@@ -1,18 +1,18 @@
-import { DataSourceConnector, IDataSourceDictionary } from '../../data-sources';
-
-import dataSourceMock from '../mocks/dataSource';
+import { IDataSourceDictionary } from '../../data-sources';
+import { setupTests } from '../utils/setup';
+import dashboardMock from '../mocks/dashboards/constants';
 
 describe('Data Source: Constant', () => {
 
-  let dataSources: IDataSourceDictionary = {};
+  let dataSources: IDataSourceDictionary;
 
-  beforeAll(() => {
-    DataSourceConnector.createDataSources({ dataSources: [ dataSourceMock ]}, {});
+  beforeAll((done) => {
+    dataSources = setupTests(dashboardMock, done);
   });
 
   it ('Check basic data == 3 rows', () => {
 
-    expect(dataSources).toHaveProperty('data');
+    expect(dataSources).toHaveProperty('data');;
     expect(dataSources.data).toHaveProperty('store');
     expect(dataSources.data).toHaveProperty('action');
     expect(dataSources.data.store).toHaveProperty('state');

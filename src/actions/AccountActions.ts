@@ -15,11 +15,7 @@ class AccountActions extends AbstractActions implements IAccountActions {
 
     return (dispatcher: (account: IDictionary) => void) => {
 
-      request('/auth/account', {
-          json: true
-        }, 
-        (error: any, result: any) => {
-
+      request('/auth/account', { json: true }, (error: any, result: any) => {
           if (error) {
             return this.failure(error);
           }

@@ -3,11 +3,11 @@ import alt, { AbstractStoreModel } from '../../alt';
 import spinnerActions from './SpinnerActions';
 
 export interface ISpinnerStoreState {
-  pageLoading?: number
-  requestLoading?: number
-  mounted: boolean
-  currentBreakpoint: string
-  layouts: object
+  pageLoading?: number;
+  requestLoading?: number;
+  mounted: boolean;
+  currentBreakpoint: string;
+  layouts: object;
 }
 
 class SpinnerStore extends AbstractStoreModel<ISpinnerStoreState> implements ISpinnerStoreState {
@@ -52,6 +52,6 @@ class SpinnerStore extends AbstractStoreModel<ISpinnerStoreState> implements ISp
   }
 }
 
-const spinnerStore = alt.createStore<ISpinnerStoreState>(SpinnerStore, "SpinnerStore");
+const spinnerStore = alt.createStore<ISpinnerStoreState>(SpinnerStore, 'SpinnerStore');
 
 export default spinnerStore;

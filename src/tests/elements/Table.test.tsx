@@ -8,25 +8,30 @@ import { Spinner, SpinnerActions } from '../../components/Spinner';
 import Table from '../../components/generic/Table';
 import { DataSourceConnector, IDataSourceDictionary } from '../../data-sources';
 
-import dataSourceMock from '../mocks/dataSource';
-import tablePropsMock from '../mocks/table';
+//import dataSourceMock from '../mocks/dataSource';
+import dashboardMock from '../mocks/dashboards/table';
 
 describe('Table', () => {
 
   let dataSources: IDataSourceDictionary = {};
   let table;
 
-  beforeAll(() => {
+  beforeAll((done) => {
 
-    DataSourceConnector.createDataSources({ dataSources: [ dataSourceMock ]}, {});
+    DataSourceConnector.createDataSources(dashboardMock, dashboardMock.config.connections);
+    dataSources = DataSourceConnector.getDataSources();
 
-    table = TestUtils.renderIntoDocument(<Table {...tablePropsMock} />);
+    let {id, dependencies, actions, props, title, subtitle } = dashboardMock.elements[0];
+    let atts = {id, dependencies, actions, props, title, subtitle };
+    table = TestUtils.renderIntoDocument(<Table {...(atts as any)} />);
     TestUtils.isElementOfType(table, 'div');
+
+    setTimeout(done, 10);
   })
 
   it('Render inside a Card', () => {
-    let progress = TestUtils.scryRenderedComponentsWithType(table, Card);
-    expect(progress.length).toBe(1);
+    let card = TestUtils.scryRenderedComponentsWithType(table, Card);
+    expect(card.length).toBe(1);
   });
 
   it('Render a Data Table entity', () => {
@@ -34,15 +39,17 @@ describe('Table', () => {
     expect(progress.length).toBe(1);
   });
 
-  it('Rows == 19', () => {
+  it('Rows == 4', () => {
     let rows = TestUtils.scryRenderedComponentsWithType(table, TableRow);
-    expect(rows.length).toBe(19);
+    expect(rows.length).toBe(4);
   });
 
-  it('Rows == 25', () => {
-    dataSources['data'].action.updateDependencies();
+  it('Rows == 0', () => {
+    dataSources['samples'].action.updateDependencies({
+      values: []
+    });
     let rows = TestUtils.scryRenderedComponentsWithType(table, TableRow);
-    expect(rows.length).toBe(25);
+    expect(rows.length).toBe(1);
   });
 
   afterAll(() => {

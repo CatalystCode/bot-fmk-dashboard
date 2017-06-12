@@ -48,7 +48,7 @@ export default class Detail extends GenericComponent<IDetailProps, IDetailState>
         const header = cols[ci].header;
         const field = cols[ci].field;
         const data = value[field];
-        const key = ri + "-" + ci;
+        const key = ri + '-' + ci;
         const content = this.renderData(data);
 
         return (
@@ -56,14 +56,14 @@ export default class Detail extends GenericComponent<IDetailProps, IDetailState>
             <h6>{header}</h6>
             <div className="content">{content}</div>
           </li>
-        )
+        );
       });
 
       return (
         <ul key={ri} className="details">
           {items}
         </ul>
-      )
+      );
     });
 
     return (
@@ -74,10 +74,15 @@ export default class Detail extends GenericComponent<IDetailProps, IDetailState>
   }
 
   private renderData(data: any): any {
-    if (data && data.length > 1 && data.substr(0, 1) === '[' && data.substr(-1) == ']') {
-      const arr = JSON.parse(data);
-      if (Array.isArray(arr)) {
-        return this.renderArray(arr);
+    if (data && data.length > 1 && data.substr(0, 1) === '[' && data.substr(-1) === ']') {
+      const obj = JSON.parse(data);
+      if (Array.isArray(obj)) {
+        return this.renderArray(obj);
+      }
+    } else if (data && data.length > 1 && data.substr(0, 1) === '{' && data.substr(-1) === '}') {
+      const obj = JSON.parse(data);
+      if (typeof obj === 'object') {
+        return this.renderObject(obj);
       }
     }
     return <p>{data}</p>;
@@ -89,7 +94,7 @@ export default class Detail extends GenericComponent<IDetailProps, IDetailState>
       <ul>
         {contents}
       </ul>
-    )
+    );
   }
 
   private renderObject(data: any): any {

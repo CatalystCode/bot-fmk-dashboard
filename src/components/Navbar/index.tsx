@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import NavigationDrawer from 'react-md/lib/NavigationDrawers';
+import Toolbar from 'react-md/lib/Toolbars';
 import FontIcon from 'react-md/lib/FontIcons';
 import ListItem from 'react-md/lib/Lists/ListItem';
 import Avatar from 'react-md/lib/Avatars';
@@ -8,6 +9,9 @@ import SelectField from 'react-md/lib/SelectFields';
 import NavigationLink from './NavigationLink';
 import { Link } from 'react-router';
 import Chip from 'react-md/lib/Chips';
+import Menu from 'react-md/lib/Menus/Menu';
+import MenuButton from 'react-md/lib/Menus/MenuButton';
+import Button from 'react-md/lib/Buttons';
 
 import AccountStore from '../../stores/AccountStore';
 import AccountActions from '../../actions/AccountActions';
@@ -16,27 +20,11 @@ import ConfigurationsStore from '../../stores/ConfigurationsStore';
 
 import './style.css';
 
-const avatarSrc = 'https://cloud.githubusercontent.com/assets/13041/19686250/971bf7f8-9ac0-11e6-975c-188defd82df1.png';
-
 const drawerHeaderChildren = [
   (
-    <Avatar
-      key={avatarSrc}
-      src={avatarSrc}
-      role="presentation"
-      iconSized={true}
-      style={{ alignSelf: 'center', marginLeft: 16, marginRight: 16, flexShrink: 0 }}
-    />
-  ),
-  (
-    <SelectField
-      id="account-switcher"
-      defaultValue="Jonathan"
-      menuItems={['Jonathan', 'Fred']}
-      key="account-switcher"
-      position={SelectField.Positions.BELOW}
-      className="md-select-field--toolbar"
-    />
+    <div key={0} style={{ alignSelf: 'center', marginLeft: 16, marginRight: 16, flexShrink: 0 }}>
+      <h3>Ibex Dashboard</h3>
+    </div>
   )
 ];
 
@@ -57,47 +45,30 @@ export default class Navbar extends React.Component<any, any> {
     });
   }
 
+  componentDidMount() {
+    // Checking if running locally and authentication is activated
+    // This is a mitigation that handles authentication in local environment
+    // that relies on two ports and redirections.
+    if (window.location.port === '3000' && window.location.hostname === 'localhost') {
+      setTimeout(
+        () => {
+          if (!window['dashboardTemplates']) {
+            this.setState({ noTemplates: true });
+          }
+        }, 
+        5000
+      );
+    }
+  }
+
   render() {
-    let { dashboards } = this.state;
+    let { dashboards, noTemplates } = this.state;
     let { children, title } = this.props;
     let pathname = '/';
     try { pathname = window.location.pathname; } catch (e) { }
 
-    let navigationItems = [
-      (
-        <ListItem
-          key="0"
-          component={Link}
-          href="/"
-          active={pathname === '/'}
-          leftIcon={<FontIcon>home</FontIcon>}
-          tileClassName="md-list-tile--mini"
-          primaryText={'Home'}
-        />
-      ),
-      (
-        <ListItem
-          key="1"
-          component={Link}
-          href="/about"
-          active={pathname === '/about'}
-          leftIcon={<FontIcon>help_outline</FontIcon>}
-          tileClassName="md-list-tile--mini"
-          primaryText={'Help'}
-        />
-      ),
-      (
-        <ListItem
-          key="2"
-          component={Link}
-          href="/setup"
-          active={pathname === '/setup'}
-          leftIcon={<FontIcon>settings</FontIcon>}
-          tileClassName="md-list-tile--mini"
-          primaryText={'Settings'}
-        />
-      )
-    ];
+    let navigationItems = [];
+    let toolbarTitle = null;
 
     (dashboards || []).forEach((dashboard, index) => {
       let name = dashboard.name || null;
@@ -105,6 +76,12 @@ export default class Navbar extends React.Component<any, any> {
       let active = pathname === url;
       if (!title && active && name) {
         title = name;
+        toolbarTitle = !dashboard.logo ? name : (
+          <span>
+            <span className="title-logo"><img src={dashboard.logo} /></span>
+            <span>{name}</span>
+          </span>
+        );
       }
 
       navigationItems.push(
@@ -119,58 +96,115 @@ export default class Navbar extends React.Component<any, any> {
             primaryText={name || 'Dashboard'}
           />
         )
-      )
+      );
     });
-    
 
-    let toolbarActions = 
-        this.state.account ?
-          <Chip style={{ marginRight: 30 }} label={'Hello, ' + this.state.account.displayName} /> :
-          null;
-
-    if (!title) {
+    if (!toolbarTitle) {
       switch (window.location.pathname) {
         case '/':
-          title = 'Home';
+          toolbarTitle = 'Create Dashboard';
           break;
 
         case '/about':
-          title = 'Help';
+          toolbarTitle = 'Help';
           break;
 
         case '/dashboard':
-          title = 'Dashboard';
+          toolbarTitle = 'Dashboard';
           break;
 
         case '/dashboard/config':
-          title = 'Dashboard Configuration';
+          toolbarTitle = 'Dashboard Configuration';
           break;
 
         case '/setup':
-          title = 'Setup Dashboard';
+          toolbarTitle = 'Setup Authentication';
           break;
 
         default:
 
-          title = 'Ibex Dashboard';
+          toolbarTitle = 'Ibex Dashboard';
           break;
       }
     }
 
+    const drawerType = navigationItems.length > 0 ?
+      NavigationDrawer.DrawerTypes.TEMPORARY_MINI : NavigationDrawer.DrawerTypes.TEMPORARY;
+
+    const toolbarActions = [(
+      <Button
+          icon 
+          tooltipLabel="Create Dashboard"
+          href="/"
+          component={Link}
+      >add_box
+      </Button>), (
+      <MenuButton
+        id="vert-menu"
+        icon
+        buttonChildren="more_vert"
+        position={Menu.Positions.BOTTOM_RIGHT}
+      >
+        {
+          this.state.account ? (
+            <ListItem
+              primaryText={this.state.account.displayName}
+              leftAvatar={<Avatar>this.state.account.displayName.charAt(0).toUpperCase()</Avatar>}
+              disabled
+            />
+          ) : (
+              <ListItem
+                primaryText="Anon"
+                leftAvatar={<Avatar icon={<FontIcon>perm_identity</FontIcon>} />}
+                disabled
+              />
+            )
+        }
+        <ListItem
+          primaryText="Setup Authentication"
+          href="/setup"
+          active={pathname === '/setup'}
+          component={Link}
+          leftIcon={<FontIcon>lock</FontIcon>}
+        />
+      </MenuButton>
+      )];
+
+    if (noTemplates && !dashboards && window.location.pathname !== '/setup') {
+      children = (
+        <div>
+          <h1>There's seems to be a problem</h1>
+          <span>If you are running locally, ensure to first open </span>
+          <a target="_blank" href="http://localhost:4000">http://localhost:4000</a>
+          <span> and then </span>
+          <a href="http://localhost:3000">http://localhost:3000</a>.
+        </div>
+      );
+    }
+
     return (
       <div>
-        <NavigationDrawer
-          navItems={navigationItems}
-          contentClassName="md-grid"
-          drawerHeaderChildren={drawerHeaderChildren}
-          mobileDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
-          tabletDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
-          desktopDrawerType={NavigationDrawer.DrawerTypes.TEMPORARY_MINI}
-          toolbarTitle={title}
-          toolbarActions={toolbarActions}
-        >
-          {children}
-        </NavigationDrawer>
+        {navigationItems.length > 0 ? (
+          <NavigationDrawer
+            navItems={navigationItems}
+            contentClassName="md-grid"
+            drawerHeaderChildren={drawerHeaderChildren}
+            mobileDrawerType={drawerType}
+            tabletDrawerType={drawerType}
+            desktopDrawerType={drawerType}
+            toolbarTitle={toolbarTitle}
+            toolbarActions={toolbarActions}
+          >
+            {children}
+          </NavigationDrawer>
+        ) : (
+            <div>
+              <Toolbar title={toolbarTitle} actions={toolbarActions} colored />
+              <div className="md-grid">
+                {children}
+              </div>
+            </div>
+          )}
       </div>
     );
   }

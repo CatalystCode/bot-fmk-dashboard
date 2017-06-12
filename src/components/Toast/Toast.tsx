@@ -16,10 +16,6 @@ export default class Toast extends React.Component<any, IToastStoreState> {
     this.removeToast = this.removeToast.bind(this);
   }
 
-  private removeToast() {
-    ToastActions.removeToast();
-  }
-
   onChange(state: any) {
     this.setState(state);
   }
@@ -37,5 +33,9 @@ export default class Toast extends React.Component<any, IToastStoreState> {
         onDismiss={this.removeToast}
       />
     );
+  }
+
+  private removeToast() {
+    ToastActions.removeToast();
   }
 }
