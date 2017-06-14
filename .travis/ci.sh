@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-CI=true yarn lint
-CI=true yarn test
+(cd client; CI=true yarn lint)
+(cd client; CI=true yarn test)

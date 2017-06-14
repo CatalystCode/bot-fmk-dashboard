@@ -19,12 +19,6 @@
   },
   "exclude": [
     "node_modules",
-    "build",
-    "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest",
-    "server",
     "src/setupTests.ts"
   ],
   "types": [

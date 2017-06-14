@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-yarn install
-yarn run css:build
+(cd server; yarn install)
+(cd client; yarn install; yarn run css:build)

@@ -11,9 +11,10 @@ This is an application insights based project that displays a bots analytics das
 1. Clone
 2. [Get an Application Insights App ID and Api Key](https://dev.applicationinsights.io/documentation/Authorization/API-key-and-App-ID)
 
-4. Run `npm run start:dev`
-5. Open **http://localhost:3000/**
-6. Run through setup and afterwards, fill in **API Key** and **Application ID**
+4. Run `cd server; yarn start`
+5. Run `cd client; yarn start`
+6. Open **http://localhost:3000/**
+7. Run through setup and afterwards, fill in **API Key** and **Application ID**
 
 ## Deploy To Azure
 
@@ -67,12 +68,15 @@ Thinking about integrating with:
 ```bash
 git clone https://github.com/CatalystCode/ibex-dashboard.git
 cd ibex-dashboard
-npm install
+(cd client; yarn install)
+(cd server; yarn install)
 ```
 
 ### Dev
+
 ```bash
-npm run start:dev
+(cd server; yarn start)
+(cd client; yarn start)
 ```
 
 ### Test Watcher
@@ -80,12 +84,24 @@ Runs the test watcher in an interactive mode.
 By default, runs tests related to files changes since the last commit.
 
 ```bash
-npm test
+cd client
+yarn test
+```
+
+Alternatively, you can also run the full commands that the Travis CI server
+will run to validate any changes.
+
+```bash
+.travis/ci.sh
 ```
 
 ### Build for Production
+Our CI server Travis creates new production builds automatically for changes
+to master. If you need to create a build locally, you can execute the same
+commands as the CI server.
+
 ```bash
-npm run build
+.travis/build.sh
 ```
 
 ## What’s Inside?

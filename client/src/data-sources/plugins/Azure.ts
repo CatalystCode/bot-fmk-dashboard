@@ -1,8 +1,5 @@
 import * as request from 'xhr-request';
 
-// var msRestAzure = require('ms-rest-azure');
-// var resourceManagement = require("azure-arm-resource");
-
 import { DataSourcePlugin, IOptions } from './DataSourcePlugin';
 import AzureConnection from '../connections/azure';
 import { DataSourceConnector } from '../DataSourceConnector';

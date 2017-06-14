@@ -1,5 +1,5 @@
 {
-  "name": "ibex-dashboard",
+  "name": "ibex-dashboard-client",
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:4000/",
@@ -38,29 +38,19 @@
     "tslint": "^4.0.0"
   },
   "dependencies": {
-    "body-parser": "^1.17.1",
-    "cookie-parser": "^1.4.3",
-    "express": "^4.15.2",
-    "express-session": "^1.15.2",
     "lodash": "^4.17.4",
     "lodash.throttle": "^4.1.1",
     "material-colors": "^1.2.5",
     "moment": "^2.18.0",
-    "morgan": "^1.8.1",
-    "ms-rest-azure": "^2.1.2",
-    "passport": "^0.3.2",
-    "passport-azure-ad": "^3.0.5",
     "xhr-request": "^1.0.1"
   },
   "scripts": {
     "css:build": "node-sass src/ -o src/",
     "css:watch": "yarn run css:build && node-sass src/ -o src/ --watch --recursive",
-    "server:start": "yarn start",
     "client:start": "react-scripts-ts start",
-    "start:dev": "npm-run-all -p css:watch server:start client:start",
+    "start": "npm-run-all -p css:watch client:start",
     "coverage": "react-scripts-ts test --env=jsdom --coverage --collectCoverageFrom=src/**/*.{ts,tsx} --collectCoverageFrom=!src/**/*.d.ts",
-    "start": "node server",
-    "lint": "tslint src server",
+    "lint": "tslint src",
     "build": "yarn run css:build && react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom"
   }
