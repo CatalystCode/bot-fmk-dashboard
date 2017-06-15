@@ -3,6 +3,7 @@ return {
 	name: "Sage One Bot Analytics Dashboard",
 	icon: "dashboard",
 	url: "S1_bot_analytics_dashboard",
+  logo: "https://hellopegg.io/landing/images2/peggcharacterheader_slate.png",
 	description: "Microsoft Bot Framework based analytics",
 	preview: "/images/bot-framework-preview.png",
 	html: `<div>

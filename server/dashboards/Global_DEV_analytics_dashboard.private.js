@@ -3,6 +3,7 @@ return {
 	name: "Global DEV Analytics Dashboard",
 	icon: "apps",
 	url: "Global_DEV_analytics_dashboard",
+  logo: "https://hellopegg.io/landing/images2/peggcharacterheader_slate.png",
 	description: "Microsoft Bot Framework based analytics",
 	preview: "/images/bot-framework-preview.png",
 	html: `<div>
