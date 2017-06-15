@@ -50,7 +50,8 @@
     "ms-rest-azure": "^2.1.2",
     "passport": "^0.3.2",
     "passport-azure-ad": "^3.0.5",
-    "xhr-request": "^1.0.1"
+    "xhr-request": "^1.0.1",
+    "yarn": "^0.24.5"
   },
   "scripts": {
     "css:build": "node-sass src/ -o src/",
