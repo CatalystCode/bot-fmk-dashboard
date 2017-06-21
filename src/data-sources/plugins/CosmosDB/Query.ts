@@ -115,7 +115,7 @@ export default class CosmosDBQuery extends DataSourcePlugin<IQueryParams> {
 
   // Helper methods to strip dollar sign from JSON key names 
   private remap(json: any) {
-    if (typeof json === 'object') {
+    if (json !== null && typeof json === 'object') {
       return this.remapObject(json);
     } else if (Array.isArray(json)) {
       return this.remapArray(json);
