@@ -11,18 +11,18 @@ export default class ApplicationInsightsApi implements IApplicationInsightsApi {
   constructor(private appId: string, private apiKey: string) { }
   
   callQuery(query: string, callback: (error?: Error, json?: any) => void) {
-    var url = `${appInsightsUri}/${this.appId}/query`; 
     try {
       request(
-        url, 
+        `${appInsightsUri}/query`,
         {
           method: 'POST',
           json: true,
-          headers: {
-            'x-api-key': this.apiKey
+          body: {
+            apiKey: this.apiKey,
+            appId: this.appId,
+            query,
           },
-          body: { query }
-        }, 
+        },
         (error: Error, json: any) => {
           if (error) {
             callback(error);

@@ -96,21 +96,19 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
       });
     }
 
-    var url = `${appInsightsUri}/${appId}/query?timespan=${queryTimespan}`;
-
     return (dispatch) => {
       request(
-        url, 
+        `${appInsightsUri}/query`,
         {
           method: 'POST',
           json: true,
-          headers: {
-            'x-api-key': apiKey
-          },
           body: {
-            query
-          }
-        }, 
+            queryTimespan,
+            appId,
+            apiKey,
+            query,
+          },
+        },
         (error, json) => {
           if (error) { return this.failure(error); }
           if (json.error) {

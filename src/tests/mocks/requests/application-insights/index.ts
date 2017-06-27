@@ -6,24 +6,21 @@ import { appInsightsUri } from '../../../../data-sources/plugins/ApplicationInsi
 
 const { appId, apiKey } = dashboardMock.config.connections['application-insights'];
 
-/**
- * Mocking application insights requets
- */
-function mockRequests() {
-
-  nock(appInsightsUri, {
-    reqheaders: {
-      "x-api-key": apiKey
-    }
-  })
-    .post(`/${appId}/query?timespan=PT24H`)
-    .delay(100)
-    .reply(200, query24HResponseMock)
-    .post(`/${appId}/query?timespan=P30D`)
-    .delay(100)
-    .reply(200, query30DResponseMock);
-
+function mock24hoursAppInsightsRequest() {
+  nock(appInsightsUri)
+  .post(`/query`)
+  .delay(100)
+  .reply(200, query24HResponseMock)
 }
+
+function mock30daysAppInsightsRequest() {
+  nock(appInsightsUri)
+  .post(`/query`)
+  .delay(100)
+  .reply(200, query30DResponseMock);
+}
+
 export {
-  mockRequests
+  mock24hoursAppInsightsRequest,
+  mock30daysAppInsightsRequest,
 };
