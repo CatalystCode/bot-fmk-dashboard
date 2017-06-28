@@ -8,6 +8,7 @@ interface IConfigurationsActions {
   loadTemplate(id: string): any;
   saveConfiguration(dashboard: IDashboardConfig): any;
   failure(error: any): void;
+  deleteDashboard(id: string): any;
 }
 
 class ConfigurationsActions extends AbstractActions implements IConfigurationsActions {
@@ -112,6 +113,23 @@ class ConfigurationsActions extends AbstractActions implements IConfigurationsAc
 
   failure(error: any) {
     return { error };
+  }
+
+  deleteDashboard(id: string) {
+    return (dispatcher: (result: any) => any) => {
+      request('/api/dashboards/' + id, {
+        method: 'DELETE',
+        json: true
+      }, 
+              (error: any, json: any) => {
+          if (error || (json && json.errors)) {
+            return this.failure(error || json.errors);
+          }
+
+          return dispatcher(json.ok);
+        }
+      );
+    };
   }
 
   private getScript(source: string, callback?: () => void): boolean {
