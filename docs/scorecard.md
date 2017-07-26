@@ -91,7 +91,7 @@ All items in `values` should contains:
 ## Dynamic cards
 
 This configuration allows you to define multiple cards from multiple sources in a dynamic way.
-To do that, you need to deinfe each card in the format `card_<card name>_<property>`.
+To do that, you need to define each card in the format `card_<card name>_<property>`.
 
 The following example shows how to define two cards, `errors` and `users` where each defines its own properties:
 
@@ -101,13 +101,13 @@ The following example shows how to define two cards, `errors` and `users` where 
   type: "Scorecard",
   size: { w: 2, h: 3 },
   dependencies: {
-    card_errors_value: "errors:handledAtTotal",
+    card_errors_value: "errors:typesTotal",
     card_errors_heading: "::Errors",
-    card_errors_color: "errors:handledAtTotal_color",
-    card_errors_icon: "errors:handledAtTotal_icon",
-    card_errors_subvalue: "errors:handledAtTotal",
+    card_errors_color: "errors:typesTotal_color",
+    card_errors_icon: "errors:typesTotal_icon",
+    card_errors_subvalue: "errors:typesTotal",
     card_errors_subheading: "::Avg",
-    card_errors_className: "errors:handledAtTotal_class",
+    card_errors_tooltip: "::Total errors",
 
     card_users_value: "ai:users-value",
     card_users_heading: "::Total Users",
@@ -129,6 +129,7 @@ A card value has the following properties:
 | `subvalue`| Small value to display
 | `subheading`| Small heading under small value to display
 | `className`| Class name to add to value
+| `tooltip`| Tooltip to display on hover
 
 These are examples of openning a dialog when clicking on a card:
 
@@ -173,13 +174,13 @@ These are examples of openning a dialog when clicking on a card:
   type: "Scorecard",
   size: { w: 2, h: 3 },
   dependencies: {
-    card_errors_value: "errors:handledAtTotal",
+    card_errors_value: "errors:typesTotal",
     card_errors_heading: "::Errors",
-    card_errors_color: "errors:handledAtTotal_color",
-    card_errors_icon: "errors:handledAtTotal_icon",
-    card_errors_subvalue: "errors:handledAtTotal",
+    card_errors_color: "errors:typesTotal_color",
+    card_errors_icon: "errors:typesTotal_icon",
+    card_errors_subvalue: "errors:typesTotal",
     card_errors_subheading: "::Avg",
-    card_errors_className: "errors:handledAtTotal_class",
+    card_errors_tooltip: "::Total errors",
     card_errors_onClick: "::onErrorsClick",
 
     card_users_value: "ai:users-value",

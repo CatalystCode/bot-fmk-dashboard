@@ -34,7 +34,7 @@ dependencies: {
 
 ## Props 
 
-Define `props` as follows:
+Takes same props as Table. Mandatory SplitPanel `props` are:
 
 | Property | Type | Description 
 | :--------|:-----|:-----------

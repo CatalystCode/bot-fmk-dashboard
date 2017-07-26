@@ -1,0 +1,88 @@
+.md-card .widgets {
+  position: absolute;
+  top: 10px;
+  right: 10px; }
+
+.md-card-scorecard .scorecard {
+  width: 100px;
+  height: 90px;
+  white-space: nowrap;
+  float: left;
+  margin: 10px 8px 20px; }
+  .md-card-scorecard .scorecard.clickable-card {
+    cursor: pointer; }
+    .md-card-scorecard .scorecard.clickable-card:hover {
+      background-color: #ECEFF1; }
+  .md-card-scorecard .scorecard.color-bottom .md-subheading-2 {
+    margin-bottom: 3px; }
+  .md-card-scorecard .scorecard.color-bottom .scorecard-subheading {
+    padding-bottom: 4px;
+    border-bottom: solid 4px transparent; }
+  .md-card-scorecard .scorecard.color-left {
+    padding-left: 5px;
+    border-left: solid 3px transparent; }
+  .md-card-scorecard .scorecard .md-icon {
+    float: left;
+    padding: 3px 3px 0 0; }
+  .md-card-scorecard .scorecard .md-headline {
+    margin-bottom: 0;
+    font-weight: 500; }
+  .md-card-scorecard .scorecard .md-subheading-2 {
+    text-overflow: ellipsis;
+    overflow-x: hidden; }
+  .md-card-scorecard .scorecard b {
+    margin-right: 5px;
+    margin-bottom: 0;
+    font-weight: 500; }
+
+/* MenuFilter */
+@media screen and (min-width: 320px) {
+  .md-multiselect-menu {
+    margin-top: 50px; } }
+
+@media screen and (min-width: 1025px) {
+  .md-multiselect-menu {
+    margin-top: 58px; } }
+
+.md-value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+/* Table */
+.table > .primary {
+  display: block;
+  color: black; }
+
+.table > .secondary {
+  color: grey; }
+
+td.text {
+  white-space: normal; }
+
+td.summary {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+/* Sentiment */
+.sentiment_very_dissatisfied {
+  color: red !important; }
+
+.sentiment_dissatisfied {
+  color: orange !important; }
+
+.sentiment_neutral {
+  color: grey !important; }
+
+.sentiment_satisfied {
+  color: yellow !important; }
+
+.sentiment_very_satisfied {
+  color: green !important; }
+
+.error_outline {
+  color: lightgrey !important; }
+
+.tooltip {
+  visibility: visible !important; }

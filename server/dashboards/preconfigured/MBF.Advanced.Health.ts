@@ -1,4 +1,4 @@
-/// <reference path="../../../src/types.d.ts"/>
+/// <reference path="../../../client/@types/types.d.ts"/>
 import * as _ from 'lodash';
 
 // The following line is important to keep in that format so it can be rendered into the page
@@ -8,11 +8,11 @@ export const config: IDashboardConfig = /*return*/ {
   icon: "av_timer",
   url: "mbf_advanced_health",
   description: "Bot Framework Advanced Health Dashboard",
-  preview: "/images/bot-framework-preview.png",
-  html: ``,
+  preview: "/images/default.png",
+  category: 'Bots - Advanced',
+  html: `POC - Additional info will be added in the future`,
   config: {
-    connections: {
-    },
+    connections: { },
     layout: {
       isDraggable: true,
       isResizable: true,
@@ -111,14 +111,14 @@ export const config: IDashboardConfig = /*return*/ {
       type: "ApplicationInsights/Query",
       dependencies: { timespan: "timespan",queryTimespan: "timespan:queryTimespan",granularity: "timespan:granularity" },
       params: {
-        table: "telemetry_import",
+        table: "nflbot_CL",
         queries: {
           timeline: {
             query: (dependencies) => {
               var { granularity } = dependencies;
               return `
                 where recordType == "serviceResult" |
-                summarize count=avg(serviceResultMillisecondsDuration) by bin(timestamp, ${granularity}), service=serviceResultName |
+                summarize count=avg(serviceResultMilliseconds) by bin(timestamp, ${granularity}), service=serviceResultName |
                 order by timestamp asc`;
             },
             calculated: (timeline, dependencies) => {
@@ -285,7 +285,7 @@ export const config: IDashboardConfig = /*return*/ {
           type: "ApplicationInsights/Query",
           dependencies: { intent: "dialog_intentsDialog:intent",queryTimespan: "dialog_intentsDialog:queryspan" },
           params: {
-            table: "telemetry_import",
+            table: "nflbot_CL",
             queries: {
               "total-conversations": {
                 query: ({ intent }) => `
@@ -460,7 +460,7 @@ export const config: IDashboardConfig = /*return*/ {
           type: "ApplicationInsights/Query",
           dependencies: { intent: "dialog_conversations:intent",queryTimespan: "dialog_conversations:queryspan" },
           params: {
-            table: "telemetry_import",
+            table: "nflbot_CL",
             queries: {
               conversations: {
                 query: ({ intent }) => `

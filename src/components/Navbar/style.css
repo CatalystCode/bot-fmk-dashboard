@@ -1,0 +1,11 @@
+.md-toolbar .md-select-field--toolbar.md-select-field--toolbar {
+  margin-bottom: 6px;
+  margin-top: 6px; }
+  .md-toolbar .md-select-field--toolbar.md-select-field--toolbar .md-floating-label {
+    padding-left: 6px; }
+  .md-toolbar .md-select-field--toolbar.md-select-field--toolbar .md-text-field {
+    padding-bottom: 0;
+    padding-left: 6px;
+    padding-right: 16px;
+    padding-top: 0;
+    margin: 20px 0 0 0; }

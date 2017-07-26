@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {   
+    "appName": {
+      "defaultValue": "ibex-dashboard-linux",
+      "type": "string"
+    }
+  },
+  "variables": {
+    "servicePlanName": "[concat('serviceplan',uniqueString(resourceGroup().id))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('servicePlanName')]",
+      "apiVersion": "2016-03-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "S1",
+        "capacity": 1
+      },
+      "kind": "linux",
+      "properties": {
+        "workerSizeId": 0,
+        "reserved": true,
+        "hostingEnvironment": ""
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[parameters('appName')]",
+      "apiVersion": "2016-03-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[parameters('appName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]"
+      ],
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2016-03-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('appName'))]"
+          ],
+          "tags": {
+            "displayName": "appSettings"
+          },
+          "properties": {
+            "DOCKER_CUSTOM_IMAGE_NAME": "catalystcode/ibex-dashboard"
+          }
+        }
+      ]
+    }
+  ]
+}

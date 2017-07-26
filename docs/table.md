@@ -37,6 +37,11 @@ Define `props` as follows:
 | Property | Type | Description 
 | :--------|:-----|:-----------
 | `cols`| `object[]` | Collection of table column properties  
+| `compact`| `boolean` | Set to `true` to enable compact view
+| `hideBorders`| `boolean` | Set to `true` to hide box shadows
+| `checkboxes`| `boolean` | Set to `true` to enable checkboxes
+| `rowClassNameField`| `string` | Specify row style
+| `defaultRowsPerPage`| `number` | Default number of rows per page
 
 Define `props.cols` as follows:
 
@@ -50,6 +55,8 @@ Define `props.cols` as follows:
 | `type` | `string` | Either 'text', 'time', 'icon', 'button'. Default is 'text'
 | `format` | `string` | If type is `time` a date format can be applied
 | `value`| `string` | If type is a `icon` or `button` this will define the icon to use
+| `tooltip`| `string` | If type is a `icon` this will define the tooltip to use
+| `tooltipPosition`| `string` | If type is a `icon` this will define the tooltip position to use. Can be either `top`, `bottom`, `left` or `right`.
 | `click`| `string` | If type is a `button` this will define the action to trigger when selecting a row
 
 #### Props sample:

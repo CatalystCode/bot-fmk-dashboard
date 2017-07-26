@@ -33,7 +33,7 @@ app.use('/auth', authRouter.router);
 app.use('/api', apiRouter.router);
 app.use('/cosmosdb', cosmosDBRouter.router);
 app.use('/azure', azureRouter.router);
-app.use('/graphql', graphQLRouter.router)
+app.use('/graphql', graphQLRouter.router);
 
 app.use(express.static(path.resolve(__dirname, '..', 'build')));
 

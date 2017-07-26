@@ -1,4 +1,6 @@
-# Ibex Dashboard
+# Ibex Dashboard [![Build Status](https://travis-ci.org/CatalystCode/ibex-dashboard.png?branch=master)](https://travis-ci.org/CatalystCode/ibex-dashboard)
+
+
 This is an application insights based project that displays a bots analytics dashboard.
 
 # Preview
@@ -11,18 +13,48 @@ This is an application insights based project that displays a bots analytics das
 1. Clone
 2. [Get an Application Insights App ID and Api Key](https://dev.applicationinsights.io/documentation/Authorization/API-key-and-App-ID)
 
-4. Run `npm run start:dev`
-5. Open **http://localhost:3000/**
-6. Run through setup and afterwards, fill in **API Key** and **Application ID**
+4. Run `cd server; yarn start`
+5. Run `cd client; yarn start`
+6. Open **http://localhost:3000/**
+7. Run through setup and afterwards, fill in **API Key** and **Application ID**
 
 ## Deploy To Azure
+
+There are 3 ways to deploy to Azure:
+
+
+
+**1. Web App - Automated**
+
+1. Fork this repo (to be able to automatically create github deployment key)
+2. After fork, copy the fork url and use it with the following deployment button:
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftorosent%2Fibex-dashboard%2Fmaster%2Fscripts%2Fdeployment%2Fwebapp%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
+
+**2. Web App On Linux - Automated with Docker Hub**
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FCatalystCode%2Fibex-dashboard%2Fmaster%2Fscripts%2Fdeployment%2Fwebapponlinux%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
+
+**3. Manual**
 
 1. Fork this repo (to be able to automatically create github deployment key)
 2. Clone & Deploy:
 3. [Create a new Web App in Azure](https://docs.microsoft.com/en-us/azure/app-service-web/app-service-continuous-deployment)
 
+**Important Note**
+
 Since application insights API doesn't support ARM yet, we need to manually [create an API Key](https://dev.applicationinsights.io/documentation/Authorization/API-key-and-App-ID) for the application insights service.
 Once you created the api key, copy and paste it into the **Dashboard settings screen**.
+
+## Deploy With Docker
+
+1. `docker build -t **image name** .`
+2. `docker run -d -e PORT=80 **image name** `
+3. Docker image is also available at Docker Hub - `docker pull catalystcode/ibex-dashboard`
 
 ## Create new API Key and Application ID
 
@@ -61,18 +93,21 @@ Thinking about integrating with:
 
 
 ### Assumptions
- 1. Running node version 4.5 or above. 
+ 1. Running node version 6.11 or above. 
 
 ### Installation
 ```bash
 git clone https://github.com/CatalystCode/ibex-dashboard.git
 cd ibex-dashboard
-npm install
+(cd client; npm install -g yarn; yarn)
+(cd server; npm install -g yarn; yarn)
 ```
 
 ### Dev
+
 ```bash
-npm run start:dev
+(cd server; yarn start:dev)
+(cd client; yarn start:dev)
 ```
 
 ### Test Watcher
@@ -80,12 +115,24 @@ Runs the test watcher in an interactive mode.
 By default, runs tests related to files changes since the last commit.
 
 ```bash
-npm test
+cd client
+yarn test
+```
+
+Alternatively, you can also run the full commands that the Travis CI server
+will run to validate any changes.
+
+```bash
+.travis/ci.sh
 ```
 
 ### Build for Production
+Our CI server Travis creates new production builds automatically for changes
+to master. If you need to create a build locally, you can execute the same
+commands as the CI server.
+
 ```bash
-npm run build
+.travis/build.sh
 ```
 
 ## What’s Inside?

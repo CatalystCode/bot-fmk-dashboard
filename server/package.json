@@ -1,0 +1,22 @@
+{
+  "name": "ibex-dashboard-server",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:4000/",
+  "dependencies": {
+    "@types/lodash": "^4.14.67",
+    "body-parser": "^1.17.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.2",
+    "express-session": "^1.15.2",
+    "lodash": "^4.17.4",
+    "morgan": "^1.8.1",
+    "ms-rest-azure": "^2.1.2",
+    "passport": "^0.3.2",
+    "passport-azure-ad": "^3.0.5",
+    "xhr-request": "^1.0.1"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
