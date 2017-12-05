@@ -64,18 +64,21 @@ export function timeline(
   let values = state[args.data || 'values'];
   const timeline = values;
 
-  let _timeline = {};
+  let _timeline: { [time: number] : object} = {};
   let _lines = {};
 
   timeline.forEach(row => {
     let timestamp = row[timeField];
     let lineFieldValue = lineField === undefined ? valueField : row[lineField];
-    let valueFieldValue = row[valueField];
+    let valueFieldValue = parseFloat(row[valueField].toFixed(2));
 
     let timeValue = (new Date(timestamp)).getTime();
 
     if (!_timeline[timeValue]) {
-        _timeline[timeValue] = { time: (new Date(timestamp)).toUTCString() };
+        _timeline[timeValue] = { 
+          time: (new Date(timestamp)).toUTCString(),
+          timeValue: timeValue 
+        };
     }
 
     if (!_lines[lineFieldValue]) {
@@ -85,6 +88,9 @@ export function timeline(
     _timeline[timeValue][lineFieldValue] = valueFieldValue;
     _lines[lineFieldValue].value += valueFieldValue;
   });
+
+  // Sorting by key time as data might be received unsorted
+  _timeline = _.sortBy(_timeline, "timeValue");
 
   let lines = Object.keys(_lines);
   let usage = _.values(_lines);

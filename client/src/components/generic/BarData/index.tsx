@@ -29,7 +29,8 @@ export default class BarData extends GenericComponent<IBarProps, IBarState> {
   static fromSource(source: string) {
     return {
       values: GenericComponent.sourceFormat(source, 'bar-values'),
-      bars: GenericComponent.sourceFormat(source, 'bars')
+      bars: GenericComponent.sourceFormat(source, 'bars'),
+      isTimeChart: GenericComponent.sourceFormat(source, 'isTimeChart')
     };
   }
 
@@ -39,7 +40,8 @@ export default class BarData extends GenericComponent<IBarProps, IBarState> {
     this.handleClick = this.handleClick.bind(this);
     this.state = {
       values: [],
-      bars: []
+      bars: [],
+      isTimeChart: {}
     };
   }
 
@@ -47,12 +49,17 @@ export default class BarData extends GenericComponent<IBarProps, IBarState> {
     this.trigger('onBarClick', data.payload);
   }
 
+  hourFormat(time: string) {
+    return moment(time).format('HH:mm');
+  }
+
   render() {
-    let { values, bars } = this.state;
+    let { values, bars, isTimeChart } = this.state;
     let { id, title, subtitle, props, layout } = this.props;
     let { barProps, showLegend, nameKey } = props;
 
-    nameKey = nameKey || 'value';
+    nameKey = isTimeChart == true ? 'time' : (nameKey || 'value');
+    var format = isTimeChart == true ? this.hourFormat : {};
 
     if (!values) {
       return null;
@@ -90,7 +97,7 @@ export default class BarData extends GenericComponent<IBarProps, IBarState> {
             margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
             {...barProps}
           >
-            <XAxis dataKey={nameKey || ''} />
+            <XAxis dataKey={nameKey || ''} tickFormatter={format} />
             <YAxis />
             <CartesianGrid strokeDasharray="3 3" />
             <Tooltip />

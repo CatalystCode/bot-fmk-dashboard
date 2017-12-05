@@ -76,7 +76,8 @@ export function bars(
   }
 
   let result = {};
-  let barValues = {};
+  let barValues: { [time: number] : object} = {};
+  let isTimeChart = false;
 
   // Setting the field describing the bars
   if (barsField) {
@@ -94,13 +95,26 @@ export function bars(
         series[value] = true;
       }
     });
+    
+    // In case all keys are dates - order it and transform the datetimes
+    if (_.keys(barValues).every((value) => !Number.isNaN(Date.parse(value)))) {
+      barValues = _.sortBy(_.values(barValues), "value");
+      
+      barValues = _.map(barValues, row => {
+        row["time"] = (new Date(row["value"])).getTime()
+        isTimeChart = true;
+        
+        return row;
+      });
+    }
 
     result[prefix + 'bars'] = _.keys(series);
-    result[prefix + 'bar-values'] = _.values(barValues);
-
+    result[prefix + 'bar-values'] = barValues;
+    result["isTimeChart"] = isTimeChart;
   } else {
     result[prefix + 'bars'] = [valueField];
     result[prefix + 'bar-values'] = values;
+    result["isTimeChart"] = isTimeChart;
   }
 
   return result;
