@@ -7,7 +7,7 @@ const resourceFileProvider = require('../helpers/resourceFileProvider');
 const resourceFieldProvider = require('../helpers/resourceFieldProvider');
 
 const router = new express.Router();
-const appInsightsUri = 'https://api.applicationinsights.io/beta/apps';
+const appInsightsUri = 'https://api.applicationinsights.io/v1/apps';
 
 router.post('/query', (req, res) => {
   const { query, queryTimespan, appId, dashboardId } = req.body;
