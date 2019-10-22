@@ -118,7 +118,8 @@ export default class Dashboard extends React.Component<IDashboardProps, IDashboa
       layouts = _.extend(layouts, dashboard.layouts || {});
 
       this.layouts = layouts;
-      this.setState({
+      this.setState(state => ({
+        ...state,
         mounted: true,
         layouts: { lg: layouts['lg'] },
         grid: {
@@ -128,7 +129,7 @@ export default class Dashboard extends React.Component<IDashboardProps, IDashboa
           breakpoints: layout.breakpoints,
           verticalCompact: false
         }
-      });
+      }));
     }
   }
 
@@ -142,16 +143,17 @@ export default class Dashboard extends React.Component<IDashboardProps, IDashboa
   }
 
   onVisibilityStoreChange(state: any) {
-    this.setState({ visibilityFlags: state.flags });
+    this.setState(state => ({ ...state, visibilityFlags: state.flags }));
   }
 
   onBreakpointChange(breakpoint: any) {
     var layouts = this.state.layouts;
     layouts[breakpoint] = layouts[breakpoint] || this.layouts[breakpoint];
-    this.setState({
+    this.setState(state => ({
+      ...state,
       currentBreakpoint: breakpoint,
       layouts: layouts
-    });
+    }));
   }
 
   onLayoutChange(layout: any, layouts: any) { }
@@ -162,9 +164,10 @@ export default class Dashboard extends React.Component<IDashboardProps, IDashboa
     let breakpoint = this.state.currentBreakpoint;
     let newLayouts = this.state.layouts;
     newLayouts[breakpoint] = layout;
-    this.setState({
+    this.setState(state => ({
+      ...state,
       layouts: newLayouts
-    });
+    }));
 
     // Saving layout to API
     let { dashboard } = this.props;
@@ -180,19 +183,19 @@ export default class Dashboard extends React.Component<IDashboardProps, IDashboa
   }
 
   onConfigDashboard() {
-    this.setState({ askConfig: true });
+    this.setState(state => ({ ...state, askConfig: true }));
   }
 
   toggleEditMode() {
-    this.setState({ editMode: !this.state.editMode });
+    this.setState(state => ({ ...state, editMode: !this.state.editMode }));
   }
 
   onDeleteDashboard() {
-    this.setState({ askDelete: true });
+    this.setState(state => ({ ...state, askDelete: true }));
   }
 
   onSaveAsTemplate() {
-    this.setState({ askSaveAsTemplate: true });
+    this.setState(state => ({ ...state, askSaveAsTemplate: true }));
   }
 
   onSaveAsTemplateApprove() {
@@ -208,19 +211,19 @@ export default class Dashboard extends React.Component<IDashboardProps, IDashboa
 
     ConfigurationsActions.saveAsTemplate(template);
     window.location.href = '/';
-    this.setState({ askSaveAsTemplate: false });
+    this.setState(state => ({ ...state, askSaveAsTemplate: false }));
   }
 
   onSaveAsTemplateCancel() {
-    this.setState({ askSaveAsTemplate: false });
+    this.setState(state => ({ ...state, askSaveAsTemplate: false }));
   }
 
   newTemplateNameChange(value: string, e: any) {
-    this.setState({ newTemplateName: value });
+    this.setState(state => ({ ...state, newTemplateName: value }));
   }
 
   newTemplateDescriptionChange(value: string, e: any) {
-    this.setState({ newTemplateDescription: value });
+    this.setState(state => ({ ...state, newTemplateDescription: value }));
   }
 
   onDeleteDashboardApprove() {
@@ -230,28 +233,28 @@ export default class Dashboard extends React.Component<IDashboardProps, IDashboa
     }
     ConfigurationsActions.deleteDashboard(dashboard.id);
     window.location.href = '/';
-    this.setState({ askDelete: false });
+    this.setState(state => ({ ...state, askDelete: false }));
   }
 
   onDeleteDashboardCancel() {
-    this.setState({ askDelete: false });
+    this.setState(state => ({ ...state, askDelete: false }));
   }
 
   onConfigDashboardCancel() {
-    this.setState({ askConfig: false });
+    this.setState(state => ({ ...state, askConfig: false }));
   }
   
   onUpdateLayout() {
-    this.setState({ editMode: !this.state.editMode });
-    this.setState({ editMode: !this.state.editMode });
+    this.setState(state => ({ ...state, editMode: !this.state.editMode }));
+    this.setState(state => ({ ...state, editMode: !this.state.editMode }));
   }
 
   onOpenInfo(html: string) {
-    this.setState({ infoVisible: true, infoHtml: html });
+    this.setState(state => ({ ...state, infoVisible: true, infoHtml: html }));
   }
 
   onCloseInfo() {
-    this.setState({ infoVisible: false });
+    this.setState(state => ({ ...state, infoVisible: false }));
   }
 
   onDownloadDashboard() {
