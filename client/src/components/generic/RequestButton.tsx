@@ -23,7 +23,7 @@ interface IRequestButtonProps extends IGenericProps {
     buttonProps?: { [key: string]: Object };
   };
   theme?: string[];
-};
+}
 
 interface IRequestButtonState extends IGenericState {
   body: Object | string;

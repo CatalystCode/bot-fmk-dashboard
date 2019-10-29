@@ -309,19 +309,19 @@ export class DataSourceConnector {
           }
 
           // Calling action with arguments
-          var result = plugin[action].call(this, extrapolation.dependencies, ...args) || {};
+          let result = plugin[action].call(this, extrapolation.dependencies, ...args) || {};
 
           // Checking is result is a dispatcher or a direct value
           if (typeof result === 'function') {
             return (dispatch) => {
               result(function (obj: any) {
                 obj = obj || {};
-                var fullResult = DataSourceConnector.callibrateResult(obj, plugin, extrapolation.dependencies);
+                let fullResult = DataSourceConnector.callibrateResult(obj, plugin, extrapolation.dependencies);
                 dispatch(fullResult);
               });
             };
           } else {
-            var fullResult = DataSourceConnector.callibrateResult(result, plugin, extrapolation.dependencies);
+            let fullResult = DataSourceConnector.callibrateResult(result, plugin, extrapolation.dependencies);
             return fullResult;
           }
         };

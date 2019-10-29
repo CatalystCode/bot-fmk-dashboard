@@ -5,4 +5,4 @@ export {
   IDataSource, 
   IDataSourceDictionary, 
   IExtrapolationResult
-}
+};

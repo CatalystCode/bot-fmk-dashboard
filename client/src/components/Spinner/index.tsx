@@ -6,4 +6,4 @@ export {
   Spinner,
   SpinnerActions,
   SpinnerStore
-}
+};

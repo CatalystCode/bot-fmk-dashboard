@@ -197,11 +197,11 @@ export default class Setup extends React.Component<any, ISetupState> {
 
   onSwitchAuthenticationEnables(checked: boolean) {
     this.setState({ enableAuthentication: checked });
-  };
+  }
 
   onSwitchAllowHttp(checked: boolean) {
     this.setState({ allowHttp: checked });
-  };
+  }
 
   onFieldChange(value: string, e: any) {
     let state = {};

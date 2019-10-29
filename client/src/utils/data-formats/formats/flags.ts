@@ -52,11 +52,11 @@ export function flags(
   if (!state) { return null; }
 
   let values = params[args.data || 'values'];
-  let flags = {};
-  values.forEach(key => { flags[key] = state.selectedValue === key; });
+  let flagsobj = {};
+  values.forEach(key => { flagsobj[key] = state.selectedValue === key; });
 
-  flags[prefix + 'values-all'] = values;
-  flags[prefix + 'values-selected'] = state.selectedValue || [];
+  flagsobj[prefix + 'values-all'] = values;
+  flagsobj[prefix + 'values-selected'] = state.selectedValue || [];
 
-  return flags;
+  return flagsobj;
 }

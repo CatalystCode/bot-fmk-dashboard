@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-readonly GITHUB_ORG="${GITHUB_ORG:-CatalystCode}"
+readonly GITHUB_ORG="${GITHUB_ORG:-Azure}"
 readonly GITHUB_REPO="${GITHUB_REPO:-ibex-dashboard}"
 readonly TARGET_BRANCH="${TARGET_BRANCH:-master}"
-readonly SOURCE_BRANCH="${SOURCE_BRANCH:-ibex-version-1.0}"
+# readonly SOURCE_BRANCH="${SOURCE_BRANCH:-ibex-version-1.0}"
 
 readonly AUTOCOMMIT_NAME="Travis CI"
 readonly AUTOCOMMIT_EMAIL="travis@travis-ci.org"
@@ -16,16 +16,40 @@ log() {
 }
 
 ensure_preconditions_met() {
+
+  log "TRAVIS_BRANCH: ${TRAVIS_BRANCH}"
+  log "TRAVIS_PULL_REQUEST: ${TRAVIS_PULL_REQUEST}"
+  log "TRAVIS_PULL_REQUEST_BRANCH: ${TRAVIS_PULL_REQUEST_BRANCH}"
+  log "TRAVIS_COMMIT: ${TRAVIS_COMMIT}"
+  log "TRAVIS_COMMIT_MESSAGE: ${TRAVIS_COMMIT_MESSAGE}"
+  log "TRAVIS_COMMIT_RANGE: ${TRAVIS_COMMIT_RANGE}"
+  log "TRAVIS_BUILD_NUMBER: ${TRAVIS_BUILD_NUMBER}"
+  
+  # get last commit comment
+  ORIGINAL_COMMIT_ID="$(echo ${TRAVIS_COMMIT_RANGE} | cut -d '.' -f4)"
+  log "ORIGINAL_COMMIT_ID: ${ORIGINAL_COMMIT_ID}"
+  ORIGINAL_COMMIT_MESSAGE=$(git log --format=%B -n 1 $ORIGINAL_COMMIT_ID)
+  log "ORIGINAL_COMMIT_MESSAGE: ${ORIGINAL_COMMIT_MESSAGE}"
+
+  # If last commit was by travis build, ignore and don't push
+  if [ "${ORIGINAL_COMMIT_MESSAGE}" == "Travis build: "* ]; then
+    log "Last commit by Travis CI - Ignoring and existing"
+    exit 0
+  fi
+
   if [ -z "${TRAVIS_PULL_REQUEST_BRANCH}" ]; then
     log "Job is CI for a push, skipping creation of production build"
     exit 0
   fi
-  if [ "${TRAVIS_BRANCH}_${TRAVIS_PULL_REQUEST_BRANCH}" != "${TARGET_BRANCH}_${SOURCE_BRANCH}" ]; then
+
+  # Only if push is to master branch, include a build
+  if [ "${TRAVIS_BRANCH}" != "${TARGET_BRANCH}" ]; then
     log "Skipping creation of production build"
-    log "We only create production builds for pull requests from '${SOURCE_BRANCH}' to '${TARGET_BRANCH}'"
-    log "but this pull request is from '${TRAVIS_PULL_REQUEST BRANCH}' to '${TRAVIS_BRANCH}'"
+    log "We only create production builds for pull requests to '${TARGET_BRANCH}'"
+    log "but this pull request is to '${TRAVIS_BRANCH}'"
     exit 0
   fi
+
   if [ -z "${GITHUB_TOKEN}" ]; then
     log "GITHUB_TOKEN not set: won't be able to push production build"
     log "Please configure the token in .travis.yml or the Travis UI"
@@ -50,10 +74,11 @@ commit_build_files() {
 }
 
 push_to_github() {
-  git push origin-travis "${AUTOCOMMIT_BRANCH}:${SOURCE_BRANCH}"
+  git push origin-travis "${AUTOCOMMIT_BRANCH}:${TRAVIS_PULL_REQUEST_BRANCH}"
 }
 
 ensure_preconditions_met
+create_production_build
 setup_git
 commit_build_files
 push_to_github

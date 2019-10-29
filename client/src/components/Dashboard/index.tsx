@@ -22,7 +22,7 @@ import ConfigurationsActions from '../../actions/ConfigurationsActions';
 import ConfigurationsStore from '../../stores/ConfigurationsStore';
 import VisibilityStore from '../../stores/VisibilityStore';
 
-import {Editor, EditorActions} from './Editor';
+import { Editor, EditorActions } from './Editor';
 import { Settings } from '../Card/Settings';
 
 const renderHTML = require('react-render-html');

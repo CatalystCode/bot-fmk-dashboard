@@ -10,4 +10,4 @@ export {
   ToastStore,
   IToast, 
   IToastStoreState
-}
+};

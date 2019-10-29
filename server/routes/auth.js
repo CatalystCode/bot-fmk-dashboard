@@ -167,9 +167,9 @@ function addAuthRoutes() {
 
   // GET /auth/openid/return
   //   Use passport.authenticate() as route middleware to authenticate the
-  //   request.  If authentication fails, the user will be redirected back to the
-  //   login page.  Otherwise, the primary route function function will be called,
-  //   which, in this example, will redirect the user to the home page.
+  //   request. If authentication fails, the user will be redirected back to the
+  //   sign-in page. Otherwise, the primary route function will be called.
+  //   In this example, it redirects the user to the home page.
   router.get('/openid/return',
     passport.authenticate('azuread-openidconnect', { failureRedirect: '/auth/login' }),
     function(req, res) {
@@ -178,11 +178,11 @@ function addAuthRoutes() {
       redirectPath = null;
     });
 
-  // GET /auth/openid/return
+  // POST /auth/openid/return
   //   Use passport.authenticate() as route middleware to authenticate the
-  //   request.  If authentication fails, the user will be redirected back to the
-  //   login page.  Otherwise, the primary route function function will be called,
-  //   which, in this example, will redirect the user to the home page.
+  //   request. If authentication fails, the user will be redirected back to the
+  //   sign-in page. Otherwise, the primary route function will be called.
+  //   In this example, it will redirect the user to the home page.
   router.post('/openid/return',
     passport.authenticate('azuread-openidconnect', { failureRedirect: '/auth/login' }),
     function(req, res) {

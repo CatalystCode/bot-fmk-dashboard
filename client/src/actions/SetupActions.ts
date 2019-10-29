@@ -1,6 +1,6 @@
 import alt, { AbstractActions } from '../alt';
 import * as request from 'xhr-request';
-import {IToast, ToastActions} from '../components/Toast';
+import { IToast, ToastActions } from '../components/Toast';
 
 interface ISetupActions {
   load(): any;
@@ -9,9 +9,6 @@ interface ISetupActions {
 }
 
 class SetupActions extends AbstractActions implements ISetupActions {
-  constructor(alt: AltJS.Alt) {
-    super(alt);
-  }
 
   load() {
     

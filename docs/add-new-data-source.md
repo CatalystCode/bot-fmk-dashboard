@@ -201,7 +201,7 @@ return  {
         query: "SELECT * FROM USERS",
         parameters: { a: 1, b: 2, c: 3 }
       },
-      format: { type: "bars", valueField: "id", barsField: "first_name", seriesField: "lastName" }
+      format: { type: "bars", args: { valueField: "id", barsField: "first_name", seriesField: "lastName" } }
     }
   ],
   elements: [

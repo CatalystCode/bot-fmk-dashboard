@@ -1,6 +1,6 @@
 
 import * as _ from 'lodash';
-import {DataSourcePlugin, IOptions} from './DataSourcePlugin';
+import { DataSourcePlugin, IOptions } from './DataSourcePlugin';
 
 interface ISampleParams {
   samples: IDictionary;

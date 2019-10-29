@@ -6,4 +6,4 @@ export {
   AutoRefreshSelector,
   RefreshActions,
   RefreshStore
-}
+};

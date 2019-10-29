@@ -5,6 +5,7 @@ import { appInsightsUri } from './common';
 import ApplicationInsightsConnection from '../../connections/application-insights';
 import { DataSourceConnector, IDataSource } from '../../DataSourceConnector';
 import * as formats from '../../../utils/data-formats';
+import ConfigurationsStore from '../../../stores/ConfigurationsStore';
 
 let connectionType = new ApplicationInsightsConnection();
 
@@ -98,19 +99,19 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
       });
     }
 
-    var url = `${appInsightsUri}/${appId}/query?timespan=${queryTimespan}`;
+    let dashboardId = ConfigurationsStore.getState().dashboard.id;
 
     return (dispatch) => {
       request(
-        url, 
+        '/applicationInsights/query', 
         {
           method: 'POST',
           json: true,
-          headers: {
-            'x-api-key': apiKey
-          },
           body: {
-            query
+            query,
+            queryTimespan,
+            appId,
+            dashboardId
           }
         }, 
         (error, json) => {
@@ -118,7 +119,7 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
           if (json.error) {
             return json.error.code === 'PathNotFoundError' ? 
               this.failure(new Error(
-                `There was a problem getting results from Application Insights. Make sure the connection string is food.
+                `There was a problem getting results from Application Insights. Make sure the connection string is good.
                 ${JSON.stringify(json)}`)) : 
               this.failure(json.error);
           }
@@ -131,7 +132,7 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
           }
 
           // Map tables to appropriate results
-          var resultTables = tables.filter((aTable, idx) => {
+          let resultTables = tables.filter((aTable, idx) => {
             return idx < resultStatus.length && 
                     (resultStatus[idx].Kind === 'QueryResult' || resultStatus[idx].Kind === 'PrimaryResults');
           });
@@ -215,7 +216,7 @@ export default class ApplicationInsightsQuery extends DataSourcePlugin<IQueryPar
     mappings = mappings || {};
 
     return table.Rows.map((rowValues, rowIdx) => {
-      var row = {};
+      let row = {};
 
       table.Columns.forEach((col, idx) => {
         row[col.ColumnName] = rowValues[idx];

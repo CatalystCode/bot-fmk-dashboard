@@ -33,7 +33,7 @@
     },
     "repoURL": {
       "type": "string",
-      "defaultValue": "https://github.com/CatalystCode/bot-fmk-dashboard.git",
+      "defaultValue": "https://github.com/Azure/ibex-dashboard.git",
       "metadata": {
         "description": "Fork that repo than use the new url in [parameters file:repoUrl:value]."
       }

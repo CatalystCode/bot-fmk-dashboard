@@ -6,4 +6,4 @@ export {
   Settings,
   SettingsActions,
   SettingsStore
-}
+};

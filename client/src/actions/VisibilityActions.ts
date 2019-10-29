@@ -7,9 +7,6 @@ interface IVisibilityActions {
 }
 
 class VisibilityActions extends AbstractActions implements IVisibilityActions {
-  constructor(alt: AltJS.Alt) {
-    super(alt);
-  }
 
   setFlags(flags: IDict<boolean>): any {
     return flags;

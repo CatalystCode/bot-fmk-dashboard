@@ -8,7 +8,6 @@ import ConfigurationsStore, { IConfigurationsStoreState } from '../../stores/Con
 import ConfigurationsActions from '../../actions/ConfigurationsActions';
 
 import { DataSourceConnector, IDataSourceDictionary } from '../../data-sources';
-import connections from '../../data-sources/connections';
 
 import ConnectionsStore from '../../stores/ConnectionsStore';
 import ConnectionsActions from '../../actions/ConnectionsActions';

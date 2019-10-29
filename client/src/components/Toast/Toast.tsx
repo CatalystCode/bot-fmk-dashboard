@@ -16,8 +16,13 @@ export default class Toast extends React.Component<any, IToastStoreState> {
     this.removeToast = this.removeToast.bind(this);
   }
 
-  onChange(state: any) {
-    this.setState(state);
+  onChange(state: IToastStoreState) {
+    let { toasts, autohide, autohideTimeout } = state;
+    this.setState({
+      toasts: toasts.map(o => ({ text: o.text })),
+      autohide, 
+      autohideTimeout
+    });
   }
 
   componentDidMount() {
@@ -25,12 +30,14 @@ export default class Toast extends React.Component<any, IToastStoreState> {
   }
 
   render() {
+    const {toasts, autohide, autohideTimeout} = this.state;
     return (
       <Snackbar
-        toasts={...this.state.toasts}
-        autohideTimeout={this.state.autohideTimeout}
-        autohide={this.state.autohide}
+        toasts={toasts}
+        autohide={autohide}
+        autohideTimeout={autohideTimeout}
         onDismiss={this.removeToast}
+        lastChild={true}
       />
     );
   }

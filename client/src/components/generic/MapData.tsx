@@ -10,6 +10,8 @@ import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import { EsriProvider } from 'leaflet-geosearch';
 
+import 'react-leaflet-markercluster/dist/styles.min.css';
+
 const styles = {
   map: {
     width: '100%',
@@ -41,10 +43,10 @@ interface IMapDataProps extends IGenericProps {
   props: {
     searchLocations: boolean;
   };
-};
+}
 
 interface IMapDataState extends IGenericState {
-  markers: any[];
+  markers: Array<{ position: string[] }>;
   locations: any[];
 }
 
@@ -75,16 +77,29 @@ export default class MapData extends GenericComponent<IMapDataProps, IMapDataSta
     L.Icon.Default.imagePath = 'https://unpkg.com/leaflet@1.0.2/dist/images/';
   }
 
-  compareMarkers(markers1: any[], markers2: any[]): boolean { 
+  compareMarkers(markers1: Array<{ position: string[] }>, markers2: Array<{ position: string[] }>): boolean { 
 
     if (markers1 == markers2) { return true; } /* tslint:disable-line */
     if (!markers1 || !markers2) { return false; }
     if (markers1.length !== markers2.length) { return false; }
-    return _.isEqualWith(markers1, markers2, (a, b) => a.lat === b.lat && a.lng === b.lng);
+    return markers1.every(
+      (a, i) => markers2.length > i && 
+                a.position[0] === markers2[i].position[0] &&
+                a.position[1] === markers2[i].position[1]);
+  }
+
+  compareLocations(location1: any[], location2: any[]) {
+    if (location1 == location2) { return true; } /* tslint:disable-line */
+    if (!location1 || !location2) { return false; }
+    if (location1.length !== location2.length) { return false; }
+    return location1.every(
+      (a, i) => location2.length > i && 
+                a.location === location2[i].location &&
+                a.location_count === location2[i].location_count);
   }
 
   shouldComponentUpdate(nextProps: any, nextState: any) {
-    if (this.compareMarkers(this.state.locations, nextState.locations) &&
+    if (this.compareLocations(this.state.locations, nextState.locations) &&
         this.compareMarkers(this.state.markers, nextState.markers)) {
       return false;
     }
@@ -113,7 +128,7 @@ export default class MapData extends GenericComponent<IMapDataProps, IMapDataSta
         let markupPopup = (popup && L.popup().setContent(popup)) || null;
 
         if (results.length) {
-          markers.push({ lat: results[0].y, lng: results[0].x, popup: markupPopup });
+          markers.push({ position: [ results[0].y, results[0].x], popup: markupPopup });
         }
       });
     });
@@ -121,10 +136,10 @@ export default class MapData extends GenericComponent<IMapDataProps, IMapDataSta
     Promise.all(promises).then(() => {
       let oldMarkers = this.state.markers;
       markers = markers.sort((a, b) =>
-        a.lat > b.lat ? 1 :
-          a.lat < b.lat ? -1 :
-            a.lng > b.lng ? 1 :
-              a.lng < b.lng ? -1 : 0);
+        a.position[0] > b.position[0] ? 1 :
+          a.position[0] < b.position[0] ? -1 :
+            a.position[1] > b.position[1] ? 1 :
+              a.position[1] < b.position[1] ? -1 : 0);
       if (!_.isEqual(oldMarkers, markers)) {
         this.setState({ markers });
       }
@@ -169,7 +184,6 @@ export default class MapData extends GenericComponent<IMapDataProps, IMapDataSta
             options={{
               maxClusterRadius: 10,
             }}
-            wrapperOptions={{ enableDefaultStyle: true }}
           />
         </Map>
       </Card>

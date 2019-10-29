@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import InfoDrawer from '../../components/common/InfoDrawer';
-import * as TestUtils from 'react-addons-test-utils';
+import * as TestUtils from 'react-dom/test-utils';
 
 describe('Info drawer', () => {
   let infoDrawer;

@@ -51,7 +51,7 @@
             "displayName": "appSettings"
           },
           "properties": {
-            "DOCKER_CUSTOM_IMAGE_NAME": "catalystcode/ibex-dashboard"
+            "DOCKER_CUSTOM_IMAGE_NAME": "azure/ibex-dashboard"
           }
         }
       ]

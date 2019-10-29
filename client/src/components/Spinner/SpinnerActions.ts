@@ -8,8 +8,8 @@ interface ISpinnerActions {
 }
 
 class SpinnerActions extends AbstractActions /*implements ISpinnerActions*/ {
-  constructor(alt: AltJS.Alt) {
-    super(alt);
+  constructor(altobj: AltJS.Alt) {
+    super(altobj);
 
     this.generateActions(
       'startPageLoading',

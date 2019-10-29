@@ -33,8 +33,8 @@ export default class CosmosDBQuery extends DataSourcePlugin<IQueryParams> {
    */
   dependenciesUpdated(dependencies: any) {
     let emptyDependency = false;
-    Object.keys(this._props.dependencies).forEach((key) => {
-      if (typeof dependencies[key] === 'undefined') { emptyDependency = true; }
+    Object.keys(this._props.dependencies).forEach(dependencyKey => {
+      if (typeof dependencies[dependencyKey] === 'undefined') { emptyDependency = true; }
     });
 
     // If one of the dependencies is not supplied, do not run the query

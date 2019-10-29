@@ -17,7 +17,7 @@ interface IBarProps extends IGenericProps {
     /** The name of the property in the data source that contains the name for the X axis */
     nameKey: string;
   };
-};
+}
 
 interface IBarState extends IGenericState {
   values: any[];

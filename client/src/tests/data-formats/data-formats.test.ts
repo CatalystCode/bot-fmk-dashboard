@@ -1,5 +1,4 @@
 import { IDataSourceDictionary } from '../../data-sources';
-import { setupTests } from '../utils/setup';
 import Sample from '../../data-sources/plugins/Sample';
 
 import { formatTests } from './formats';
@@ -7,7 +6,7 @@ import * as formats from '../../utils/data-formats';
 
 describe('Data Formats', () => {
 
-  let sampleMockPlugin = new Sample(<any>{
+  let sampleMockPlugin = new Sample(<any> {
       params: {
         values: [ 'value 1', 'value 2', 'value 3' ],
         samples: {

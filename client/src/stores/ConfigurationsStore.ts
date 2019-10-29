@@ -44,7 +44,7 @@ class ConfigurationsStore extends AbstractStoreModel<IConfigurationsStoreState> 
 
     this.bindListeners({
       loadConfiguration: configurationActions.loadConfiguration,
-      loadDashboard: configurationActions.loadDashboard,
+      loadDashboardComplete: configurationActions.loadDashboardComplete,
       loadTemplate: configurationActions.loadTemplate,
       createDashboard: configurationActions.createDashboard,
       failure: configurationActions.failure
@@ -69,15 +69,16 @@ class ConfigurationsStore extends AbstractStoreModel<IConfigurationsStoreState> 
     this.templates = templates;
   }
 
-  loadDashboard(result: { dashboard: IDashboardConfig }) {
+  loadDashboardComplete(result: { dashboard: IDashboardConfig }) {
     let { dashboard } = result;
     this.dashboard = dashboard;
 
     if (this.dashboard && !this.loaded) {
+      
       DataSourceConnector.createDataSources(dashboard, dashboard.config.connections);
-
+      
       this.connections = this.getConnections(dashboard);
-
+      
       // Checking for missing connection params
       this.connectionsMissing = Object.keys(this.connections).some(connectionKey => {
         var connection = this.connections[connectionKey];

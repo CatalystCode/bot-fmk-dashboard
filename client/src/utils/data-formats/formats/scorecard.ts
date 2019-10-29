@@ -52,15 +52,15 @@ export function scorecard (
 
   let checkValue = (values && values[0] && values[0][countField]) || 0; 
   
-  let createValue = (value: any, heading: string, color: string, icon: string, subvalue?: any, subheading?: string) => {
+  let createValue = (value: any, heading: string, color: string, icon: string, subValue?: any, subHeading?: string) => {
     let item = {};
     const prefix = getPrefix(format);
     item[prefix + 'value'] = isFinite(value) ? utils.kmNumber(value, postfix) : '-';
     item[prefix + 'heading'] = heading;
     item[prefix + 'color'] = color;
     item[prefix + 'icon'] = icon;
-    item[prefix + 'subvalue'] = isFinite(subvalue) ? subvalue : '';
-    item[prefix + 'subheading'] = subheading || '';
+    item[prefix + 'subvalue'] = isFinite(subValue) ? subValue : '';
+    item[prefix + 'subheading'] = subHeading || '';
     return item;
   };
 

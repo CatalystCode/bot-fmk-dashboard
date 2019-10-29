@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as TestUtils from 'react-addons-test-utils';
+import * as TestUtils from 'react-dom/test-utils';
 
 import CircularProgress from 'react-md/lib/Progress/CircularProgress';
 import { Spinner, SpinnerActions } from '../../components/Spinner';

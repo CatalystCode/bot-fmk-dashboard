@@ -1,4 +1,4 @@
-export default <IDashboardConfig>{
+export default <IDashboardConfig> {
   id: 'id',
   url: 'url',
   icon: 'icon',

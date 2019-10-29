@@ -7,4 +7,4 @@ export {
   appInsightsUri,
   appId,
   apiKey
-}
+};

@@ -15,7 +15,7 @@ interface IRadarProps extends IGenericProps {
 
     nameKey: string;
   };
-};
+}
 
 interface IRadarState extends IGenericState {
   values: Object[];

@@ -20,11 +20,11 @@ export const config: IDashboardConfig = /*return*/ {
         Parts of this dashboard will not be functional unless you add additional telemetry 
         with one of the following plugins:
         <br/>
-        <a href="https://github.com/CatalystCode/botbuilder-instrumentation" target="_blank">
+        <a href="https://github.com/Azure/botbuilder-instrumentation" target="_blank">
           Node.js Telemetry Plugin
         </a>
         <br/>
-        <a href="https://github.com/CatalystCode/bot-sample-telemetry" target="_blank">C# Telemetry Plugin</a>
+        <a href="https://github.com/Azure/bot-sample-telemetry" target="_blank">C# Telemetry Plugin</a>
         <br/>
         This will enable the bot to send additional telemetry information to Application Insights.
         <br/>

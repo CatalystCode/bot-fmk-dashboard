@@ -21,7 +21,7 @@ interface IPieProps extends IGenericProps {
     entityType?: string;
   };
   theme?: string[];
-};
+}
 
 interface IPieState extends IGenericState {
   activeIndex?: number;

@@ -145,7 +145,7 @@ interface IElement {
   /**
    * The name of the element type to be used
    * For a complete list follow:
-   * https://github.com/CatalystCode/ibex-dashboard/tree/master/docs#elements-plugins
+   * https://github.com/Azure/ibex-dashboard/tree/master/docs#elements-plugins
    */
   type: string;
   /**

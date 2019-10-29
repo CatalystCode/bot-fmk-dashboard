@@ -8,7 +8,7 @@ import timeline from './timeline';
 import timespan from './timespan';
 import filtered_samples from './filtered_samples';
 
-export const formatTests = <IDict<IFormatTest | IFormatTest[]>>{ 
+export const formatTests = <IDict<IFormatTest | IFormatTest[]>> { 
   bars, 
   filter, 
   flags, 

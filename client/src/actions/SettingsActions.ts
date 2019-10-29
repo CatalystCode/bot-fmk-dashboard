@@ -6,9 +6,6 @@ interface ISettingsActions {
 }
 
 class SettingsActions extends AbstractActions implements ISettingsActions {
-  constructor(alt: AltJS.Alt) {
-    super(alt);
-  }
 
   saveSettings() {
     return {  };

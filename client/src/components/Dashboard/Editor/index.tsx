@@ -6,4 +6,4 @@ export {
   Editor,
   EditorActions,
   EditorStore
-}
+};

@@ -1,6 +1,6 @@
 import { IFormatTest } from './formats';
 
-export default <IFormatTest>{
+export default <IFormatTest> {
   format: {
     type: 'bars', 
     args: { 

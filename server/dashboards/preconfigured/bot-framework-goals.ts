@@ -32,9 +32,9 @@ export const config: IDashboardConfig = /*return*/ {
       <h2>Getting the data to show</h2>
       <p>
         To see all the capabilities of this dashboard, it is recommended to integrate you bot with one of the following:<br/>
-        <a href="https://github.com/CatalystCode/botbuilder-instrumentation" target="_blank">Node.js Telemetry Plugin</a>
+        <a href="https://github.com/Azure/botbuilder-instrumentation" target="_blank">Node.js Telemetry Plugin</a>
         <br/>
-        <a href="https://github.com/CatalystCode/bot-sample-telemetry" target="_blank">C# Telemetry Plugin</a><br/>
+        <a href="https://github.com/Azure/bot-sample-telemetry" target="_blank">C# Telemetry Plugin</a><br/>
         This will enable the bot to send additional telemetry information to Application Insights.
       </p>
       <br/>

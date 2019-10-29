@@ -123,7 +123,9 @@ export default class Scorecard extends GenericComponent<IScorecardProps, any> {
       return;
     }
 
-    event.preventDefault();
+    let eventObject = typeof event !== 'undefined' && event || arguments[2];
+    eventObject.preventDefault();
+
     var { title } = this.props || '' as any;
     var args = { ...value };
     this.trigger(value.onClick, args);

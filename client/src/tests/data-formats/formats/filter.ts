@@ -1,6 +1,6 @@
 import { IFormatTest } from './formats';
 
-export default <IFormatTest>{
+export default <IFormatTest> {
   format: 'filter',
   state: {
     values: [
@@ -13,4 +13,4 @@ export default <IFormatTest>{
     'values-all': [ 'value 1', 'value 2', 'value 3' ],
     'values-selected': [ ],
   }
-}
+};

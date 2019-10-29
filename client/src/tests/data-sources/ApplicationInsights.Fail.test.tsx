@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as TestUtils from 'react-addons-test-utils';
+import * as TestUtils from 'react-dom/test-utils';
 
 import { IDataSourceDictionary } from '../../data-sources';
 import { setupTests } from '../utils/setup';
@@ -16,10 +16,11 @@ describe('Data Source: Application Insights: Query', () => {
   let element;
   
   beforeAll(done => {
+
     mockRequests();
     element = TestUtils.renderIntoDocument(<Toast />);
     TestUtils.isElementOfType(element, 'div');
-    dataSources = setupTests(dashboardMock, done);
+    setupTests(dashboardMock, ds => dataSources = ds, () => setTimeout(done, 100));
   });
 
   it ('Query for 30 months with data rows', () => {

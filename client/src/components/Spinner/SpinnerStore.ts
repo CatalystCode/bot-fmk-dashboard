@@ -1,6 +1,6 @@
 import alt, { AbstractStoreModel } from '../../alt';
 
-import {Toast, ToastActions, IToast} from '../Toast';
+import { Toast, ToastActions, IToast } from '../Toast';
 import spinnerActions from './SpinnerActions';
 
 export interface ISpinnerStoreState {

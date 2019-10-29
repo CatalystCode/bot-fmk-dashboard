@@ -39,7 +39,7 @@ export const config: IDashboardConfig = /*return*/ {
       <p>
         <span>Refer to the </span>
         <span>
-          <a href="https://github.com/CatalystCode/ibex-dashboard/blob/master/docs/bot-framework.md" target="_blank">
+          <a href="https://github.com/Azure/ibex-dashboard/blob/master/docs/bot-framework.md" target="_blank">
             bot-framework
           </a> docs for setup instructions.</span>
       </p>

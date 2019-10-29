@@ -13,7 +13,7 @@ const values = [
   { name: 'slack-de', value: 1, locale: 'de', channel: 'slack' }
 ];
 
-export default <IFormatTest[]>[
+export default <IFormatTest[]> [
   {
     format: 'filtered_samples',
     params: {
@@ -30,7 +30,7 @@ export default <IFormatTest[]>[
     },
     state: { values: [ 'value 1', 'value 2', 'value 3' ] },
     expected:  {
-      "filtered_values": values
+      'filtered_values': values
     }
   },
   {
@@ -49,7 +49,7 @@ export default <IFormatTest[]>[
     },
     state: { values: [ 'value 1', 'value 2', 'value 3' ] },
     expected:  {
-      "filtered_values": _.filter(values, { locale: 'en' })
+      'filtered_values': _.filter(values, { locale: 'en' })
     }
   }
 ];

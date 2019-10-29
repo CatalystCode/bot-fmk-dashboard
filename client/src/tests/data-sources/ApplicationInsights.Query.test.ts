@@ -9,10 +9,10 @@ describe('Data Source: Application Insights: Query', () => {
 
   let dataSources: IDataSourceDictionary = {};
 
-  beforeAll(() => {
+  beforeAll((done) => {
 
     mockRequests();
-    dataSources = setupTests(dashboardMock);
+    setupTests(dashboardMock, ds => dataSources = ds, done);
   });
 
   it ('Query for 30 months with data rows', () => {

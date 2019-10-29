@@ -12,6 +12,7 @@ import MapData from './MapData';
 import TextFilter from './TextFilter';
 import CheckboxFilter from './CheckboxFilter';
 import MenuFilter from './MenuFilter';
+import DatePickerFilter from './DatePickerFilter';
 // dialog views
 import Table from './Table';
 import Detail from './Detail';
@@ -28,6 +29,7 @@ export default {
   TextFilter,
   CheckboxFilter,
   MenuFilter,
+  DatePickerFilter,
   Table,
   Detail,
   SplitPanel,

@@ -1,13 +1,20 @@
+import ConfigurationsActions from '../../actions/ConfigurationsActions';
+import ConfigurationsStore from '../../stores/ConfigurationsStore';
 import { DataSourceConnector, IDataSourceDictionary } from '../../data-sources';
 
-function setupTests(dashboardMock: IDashboardConfig, done?: () => void): IDataSourceDictionary {
-  DataSourceConnector.createDataSources(dashboardMock, dashboardMock.config.connections);
-  let dataSources = DataSourceConnector.getDataSources();
+function setupTests(
+  dashboardMock: IDashboardConfig, 
+  setDataSources: (ds: IDataSourceDictionary) => void, 
+  done: () => void): void {
 
   // Waiting for all defered functions to complete their execution
-  done && setTimeout(done, 100);
+  ConfigurationsStore.listen(() => {
+    let dataSources = DataSourceConnector.getDataSources();
+    setDataSources(dataSources);
+    return done();
+  });
 
-  return dataSources;
+  ConfigurationsActions.loadDashboardComplete(dashboardMock);  
 }
 
 export {

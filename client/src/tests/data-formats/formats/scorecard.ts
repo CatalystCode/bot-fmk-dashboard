@@ -1,6 +1,6 @@
 import { IFormatTest } from './formats';
 
-export default <IFormatTest>{
+export default <IFormatTest> {
   format: { 
    type: 'scorecard',
    args: { 
@@ -13,11 +13,11 @@ export default <IFormatTest>{
     values: [{ count: 99, other_count: 44 }]
   },
   expected: {
-    "value": "99",
-    "heading": "Heading",
-    "color": "#fff",
-    "icon": "chat",
-    "subvalue": 44,
-    "subheading": "Subheading"
+    'value': '99',
+    'heading': 'Heading',
+    'color': '#fff',
+    'icon': 'chat',
+    'subvalue': 44,
+    'subheading': 'Subheading'
   }
 };

@@ -6,8 +6,8 @@ describe('Data Source: Constant', () => {
 
   let dataSources: IDataSourceDictionary;
 
-  beforeAll((done) => {
-    dataSources = setupTests(dashboardMock, done);
+  beforeAll(done => {
+    setupTests(dashboardMock, ds => dataSources = ds, () => setTimeout(done, 100));
   });
 
   it ('Check basic data == 3 rows', () => {

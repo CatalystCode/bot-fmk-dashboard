@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as TestUtils from 'react-addons-test-utils';
+import * as TestUtils from 'react-dom/test-utils';
 
-import NotFound from '../../pages/NotFound'
+import NotFound from '../../pages/NotFound';
 
 describe('NotFound', () => {
   let setup;

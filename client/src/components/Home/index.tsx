@@ -16,6 +16,7 @@ import ConfigurationStore from '../../stores/ConfigurationsStore';
 import ConfigurationsActions from '../../actions/ConfigurationsActions';
 import utils from '../../utils';
 
+import IconPicker from './IconPicker';
 import { downloadBlob } from '../Dashboard/DownloadFile';
 
 const renderHTML = require('react-render-html');
@@ -187,7 +188,7 @@ export default class Home extends React.Component<any, IHomeState> {
     let createParams = {
       id: this._fieldId.getField().value,
       name: this._fieldName.getField().value,
-      icon: this._fieldIcon.getField().value,
+      icon: this._fieldIcon.getIcon(),
       url: this._fieldId.getField().value
     };
 
@@ -218,7 +219,7 @@ export default class Home extends React.Component<any, IHomeState> {
 
   updateFileName(value: string) {
     this.setState({ fileName: value });
-  };
+  }
 
   onLoad(importedFileContent: any, uploadResult: string) {
     const { name, size, type, lastModifiedDate } = importedFileContent;
@@ -419,6 +420,11 @@ export default class Home extends React.Component<any, IHomeState> {
             { onClick: this.onNewTemplateSave, primary: true, label: 'Create', },
           ]}
         >
+          <IconPicker 
+            ref={field => this._fieldIcon = field}
+            defaultLabel="Dashboard Icon" 
+            defaultIcon={template && template.icon || 'dashboard'}
+            listStyle={{height: '136px'}} />
           <TextField
             id="id"
             ref={field => this._fieldId = field}
@@ -436,14 +442,6 @@ export default class Home extends React.Component<any, IHomeState> {
             defaultValue={template && template.name || ''}
             lineDirection="center"
             placeholder="Choose name for the dashboard (will be used in navigation)"
-          />
-          <TextField
-            id="icon"
-            ref={field => this._fieldIcon = field}
-            label="Dashboard Icon"
-            defaultValue={template && template.icon || 'dashboard'}
-            lineDirection="center"
-            placeholder="Choose icon for the dashboard (will be used in navigation)"
           />
         </Dialog>
       </div>

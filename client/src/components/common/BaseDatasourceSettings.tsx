@@ -115,4 +115,4 @@ export abstract class BaseDataSourceSettings<T extends IBaseSettingsState>
       </Card>
     );
   }
-};
+}

@@ -3,6 +3,40 @@ import utils from '../../index';
 import { DataFormatTypes, IDataFormat, formatWarn, getPrefix } from '../common';
 import { IDataSourcePlugin } from '../../../data-sources/plugins/DataSourcePlugin';
 
+enum Interval {
+  Hours = 0,
+  Days = 1,
+  Weeks= 2,
+  Months = 3
+}
+
+interface IQueryTimespan {
+  queryTimespan: string;
+  granularity: string;
+}
+
+const timespanRegex = /^(\d+) (hour|day|week|month)s?$/;
+function parseTimespan(timespanText: string) : IQueryTimespan {
+  var match = timespanRegex.exec(timespanText);
+  if (!match) {
+    // Backwards compatibility with existing functionality
+    return { queryTimespan: "P90D", granularity: "1d" };
+  }
+
+  switch (match[2]) {
+    case "hour":
+      return { queryTimespan: `PT${match[1]}H`, granularity: "5m" };
+    case "day":
+      return { queryTimespan: `P${match[1]}D`, granularity: "30m" };
+    case "week":
+      return { queryTimespan: `P${parseInt(match[1]) * 7}D`, granularity: "1d" };
+    case "month":
+      return { queryTimespan: `P${parseInt(match[1]) * 30}D`, granularity: "1d" };
+    default:
+      return { queryTimespan: "P90D", granularity: "1d" };
+  }
+}
+
 /**
  * Receives a timespan data source and formats is accordingly
  * 
@@ -45,20 +79,8 @@ export function timespan(
 
   const params = plugin.getParams();
   const prefix = getPrefix(format);
-  let queryTimespan =
-    state.selectedValue === '24 hours' ? 'PT24H' :
-    state.selectedValue === '1 week' ? 'P7D' :
-    state.selectedValue === '1 month' ? 'P30D' :
-    'P90D';
 
-  let granularity =
-    state.selectedValue === '24 hours' ? '5m' :
-    state.selectedValue === '1 week' ? '1d' : '1d';
-
-  let result = { 
-    queryTimespan, 
-    granularity 
-  };
+  let result = parseTimespan(state.selectedValue);
 
   const args = typeof format !== 'string' && format.args || {};
   let values = params[args.data || 'values'];

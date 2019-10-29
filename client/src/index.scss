@@ -73,6 +73,10 @@ h2, .md-subheading-2 {
   padding: 10px;
   padding-top: 10px;
   font-weight: $md-font-regular;
+
+  .md-card-title--title {
+    display: flex;
+  }
 }
 
 .md-card .md-media {
@@ -105,6 +109,7 @@ h2, .md-subheading-2 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
 }
 
 div.templates > section > div.preview {
@@ -408,4 +413,10 @@ html.md-no-scroll {
   color: red !important;
 }
 
+/*================*/
+/* datePicker         */
+/*================*/
 
+#dateRangePicker.md-dialog {
+  width: auto;
+}

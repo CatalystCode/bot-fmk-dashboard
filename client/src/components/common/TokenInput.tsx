@@ -10,11 +10,11 @@ interface ITokenInputProps {
   tokens: any[];
   zDepth: number;
   onTokensChanged(): void;
-};
+}
 
 interface ITokenInputState {
   newToken: any;
-};
+}
 
 /**
  * This is a UI for editing a string array.
@@ -92,4 +92,4 @@ export default class TokenInput extends React.Component<ITokenInputProps, IToken
       </Paper>
     );
   }
-};
+}

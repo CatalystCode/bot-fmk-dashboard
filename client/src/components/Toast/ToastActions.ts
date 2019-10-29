@@ -8,8 +8,8 @@ interface IToastActions {
 }
 
 class ToastActions extends AbstractActions {
-  constructor(alt: AltJS.Alt) {
-    super(alt);
+  constructor(altobj: AltJS.Alt) {
+    super(altobj);
 
     this.generateActions(
       'addToast',

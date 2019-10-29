@@ -6,9 +6,6 @@ interface IDialogsActions {
 }
 
 class DialogsActions extends AbstractActions implements IDialogsActions {
-  constructor(alt: AltJS.Alt) {
-    super(alt);
-  }
 
   openDialog(dialogName: string, args: { [id: string]: Object }) {
     return { dialogName, args };

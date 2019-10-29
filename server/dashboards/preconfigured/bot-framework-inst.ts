@@ -20,11 +20,11 @@ export const config: IDashboardConfig = /*return*/ {
       <p>
         To see all the capabilities of this dashboard, it is recommended to integrate you bot with one of the following:
         <br/>
-        <a href="https://github.com/CatalystCode/botbuilder-instrumentation" target="_blank">
+        <a href="https://github.com/Azure/botbuilder-instrumentation" target="_blank">
           Node.js Telemetry Plugin
         </a>
         <br/>
-        <a href="https://github.com/CatalystCode/bot-sample-telemetry" target="_blank">C# Telemetry Plugin</a><br/>
+        <a href="https://github.com/Azure/bot-sample-telemetry" target="_blank">C# Telemetry Plugin</a><br/>
         This will enable the bot to send additional telemetry information to Application Insights.
       </p>
       <br/>
@@ -55,8 +55,43 @@ export const config: IDashboardConfig = /*return*/ {
     {
       id: 'timespan',
       type: 'Constant',
-      params: { values: ['24 hours', '1 week', '1 month', '3 months'], selectedValue: '1 month' },
-      format: 'timespan'
+      params: {
+        selectedValue: (() => {
+          var currentTime = new Date();
+          var stringDate = currentTime.toISOString().split('T')[0];
+          var startDate = stringDate + 'T00:00:00.000Z';
+          var endDate = stringDate + 'T23:59:59.999Z';
+  
+          var initialDateRange = startDate + '/' + endDate;
+          return initialDateRange;
+        })()
+      },
+      calculated: (state, dependencies) => {
+        var queryTimespan =  state.selectedValue;
+        var dateRangeArray = state.selectedValue.split('/');
+        
+        var initDate = new Date(dateRangeArray[0]);
+        var endDate = new Date(dateRangeArray[1]);
+        var diffTime = endDate.getTime() - initDate.getTime();
+        var diffDays = diffTime / (3600 * 1000 * 24);
+  
+        var timeFormat = (diffDays > 3) ? 'date' : 'hour' ;
+        
+        return {
+          queryTimespan: state.selectedValue,
+          startTimespan: dateRangeArray[0],
+          endTimespan: dateRangeArray[1],
+          'timeline-timeFormat': timeFormat,
+        };
+      }
+    },
+    {
+      id: 'granularity',
+      type: 'Constant',
+      params: { values: ['1h', '2h', '6h', '12h', '1d', '7d', '30d'], selectedValue: '1h' },
+      calculated: (state, dependencies) => {
+        return { granularity: state.selectedValue };
+      }
     },
     {
       id: 'modes',
@@ -70,7 +105,7 @@ export const config: IDashboardConfig = /*return*/ {
       dependencies: {
         timespan: 'timespan',
         queryTimespan: 'timespan:queryTimespan',
-        granularity: 'timespan:granularity'
+        granularity: 'granularity'
       },
       params: {
         table: 'customEvents',
@@ -100,7 +135,7 @@ export const config: IDashboardConfig = /*return*/ {
       dependencies: {
         timespan: 'timespan',
         queryTimespan: 'timespan:queryTimespan',
-        granularity: 'timespan:granularity',
+        granularity: 'granularity',
         selectedChannels: 'filters:channels-values-selected',
         selectedIntents: 'filters:intents-values-selected'
       },
@@ -222,10 +257,17 @@ export const config: IDashboardConfig = /*return*/ {
   ],
   filters: [
     {
-      type: 'TextFilter',
+      type: 'DatePickerFilter',
       title: 'Timespan',
-      source: 'timespan',
-      actions: { onChange: 'timespan:updateSelectedValue' },
+      dependencies: {selectedValue: 'timespan'},
+      actions: {onChange: 'timespan:updateSelectedValue'},
+      first: true
+    },
+    {
+      type: 'TextFilter',
+      title: 'Granularity',
+      dependencies: {selectedValue: 'granularity', values: 'granularity:values'},
+      actions: {onChange: 'granularity:updateSelectedValue'},
       first: true
     },
     {
@@ -377,7 +419,7 @@ export const config: IDashboardConfig = /*return*/ {
             intent: 'dialog_intentsDialog:intent',
             queryTimespan: 'dialog_intentsDialog:queryspan',
             timespan: 'timespan',
-            granularity: 'timespan:granularity'
+            granularity: 'granularity'
           },
           params: {
             table: 'customEvents',
@@ -910,7 +952,7 @@ export const config: IDashboardConfig = /*return*/ {
           dependencies: {
             timespan: 'timespan',
             queryTimespan: 'timespan:queryTimespan',
-            granularity: 'timespan:granularity',
+            granularity: 'granularity',
             selectedChannels: 'filters:channels-values-selected',
             selectedIntents: 'filters:intents-values-selected'
           },

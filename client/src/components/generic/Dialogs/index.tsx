@@ -22,4 +22,4 @@ export {
   Dialog,
   DialogsActions,
   DialogsStore
-}
+};
