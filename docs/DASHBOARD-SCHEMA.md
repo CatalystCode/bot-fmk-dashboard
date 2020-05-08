@@ -24,10 +24,10 @@ For a full hierarchical description, follow [IDashboardConfig <types.d.ts>](../c
 | `name`| `string` || Name of the dashboard to display in the navigation header
 | `icon`| `string` || icon to display in the navigation menu (Defaiult: 'dashboard')
 | `url`| `string` || ID to be used in the url (should be identical to ID)
-| `description`| `string` || Short description for create templtae page
-| `preview`| `string` || Preview image for create templtae page
-| `category`| `string` || Category for create templtae page
-| `html`| `string` || Full HTML description for create templtae page
+| `description`| `string` || Short description for create template page
+| `preview`| `string` || Preview image for create template page
+| `category`| `string` || Category for create template page
+| `html`| `string` || Full HTML description for create template page
 | `config`| `object` || Dashboard level configuration including connections and layouts settings
 | `dataSources`| `string` || List of data sources and queries
 | `filters`| `string` || List of filter elements to display at the top of the dashboard
