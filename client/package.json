@@ -42,7 +42,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.15.2",
     "express-session": "^1.15.2",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.19",
     "lodash.throttle": "^4.1.1",
     "material-colors": "^1.2.5",
     "moment": "^2.18.0",
